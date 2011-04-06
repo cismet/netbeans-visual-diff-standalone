@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -44,65 +51,92 @@
 package org.netbeans.modules.diff.builtin.visualizer;
 
 import java.awt.event.ActionEvent;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import javax.swing.Action;
 
+import javax.swing.Action;
 
 /**
  * Re-sources action to given source.
  *
- * @author Petr Kuzel
+ * @author   Petr Kuzel
+ * @version  $Revision$, $Date$
  */
 public class SourceTranslatorAction implements Action, PropertyChangeListener {
+
+    //~ Instance fields --------------------------------------------------------
 
     final Action scrollAction;
     final Object source;
     final PropertyChangeSupport support;
 
-    public SourceTranslatorAction(Action action, Object source) {
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new SourceTranslatorAction object.
+     *
+     * @param  action  DOCUMENT ME!
+     * @param  source  DOCUMENT ME!
+     */
+    public SourceTranslatorAction(final Action action, final Object source) {
         scrollAction = action;
         this.source = source;
         support = new PropertyChangeSupport(action);
     }
 
-    public Object getValue(String key) {
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
+    public Object getValue(final String key) {
         return scrollAction.getValue(key);
     }
 
-    public void putValue(String key, Object value) {
+    @Override
+    public void putValue(final String key, final Object value) {
         scrollAction.putValue(key, value);
     }
 
-    public void setEnabled(boolean b) {
+    @Override
+    public void setEnabled(final boolean b) {
         scrollAction.setEnabled(b);
     }
 
+    @Override
     public boolean isEnabled() {
         return scrollAction.isEnabled();
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    @Override
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         if (support.hasListeners(null) == false) {
             scrollAction.addPropertyChangeListener(this);
         }
         support.addPropertyChangeListener(listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    @Override
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
         if (support.hasListeners(null) == false) {
             scrollAction.removePropertyChangeListener(this);
         }
     }
 
-    public void actionPerformed(ActionEvent e) {
-        ActionEvent event = new ActionEvent(source, e.getID(), e.getActionCommand(), e.getWhen(), e.getModifiers());
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final ActionEvent event = new ActionEvent(
+                source,
+                e.getID(),
+                e.getActionCommand(),
+                e.getWhen(),
+                e.getModifiers());
         scrollAction.actionPerformed(event);
     }
 
-    public void propertyChange(PropertyChangeEvent evt) {
+    @Override
+    public void propertyChange(final PropertyChangeEvent evt) {
         support.firePropertyChange(evt);
     }
 }

@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,25 +50,37 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
-import org.netbeans.spi.editor.highlighting.HighlightsLayerFactory;
 import org.netbeans.spi.editor.highlighting.HighlightsLayer;
+import org.netbeans.spi.editor.highlighting.HighlightsLayerFactory;
 import org.netbeans.spi.editor.highlighting.ZOrder;
 
 /**
  * Provides highliting in Diff panels.
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 public class DiffHighlightsLayerFactory implements HighlightsLayerFactory {
 
+    //~ Static fields/initializers ---------------------------------------------
+
     static final String HIGHLITING_LAYER_ID = "org.netbeans.modules.diff.builtin.visualizer.editable.DiffContentPanel"; // NOI18N
-    
-    public HighlightsLayer[] createLayers(Context context) {
-        DiffContentPanel master = (DiffContentPanel) context.getComponent().getClientProperty(HIGHLITING_LAYER_ID);
-        if (master == null) return null;
-        
-        HighlightsLayer [] layers = new HighlightsLayer[1];
-        layers[0] = HighlightsLayer.create(HIGHLITING_LAYER_ID, ZOrder.DEFAULT_RACK, true, master.getHighlightsContainer());
+
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
+    public HighlightsLayer[] createLayers(final Context context) {
+        final DiffContentPanel master = (DiffContentPanel)context.getComponent().getClientProperty(HIGHLITING_LAYER_ID);
+        if (master == null) {
+            return null;
+        }
+
+        final HighlightsLayer[] layers = new HighlightsLayer[1];
+        layers[0] = HighlightsLayer.create(
+                HIGHLITING_LAYER_ID,
+                ZOrder.DEFAULT_RACK,
+                true,
+                master.getHighlightsContainer());
         return layers;
     }
 }

@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -50,71 +57,109 @@ import java.io.*;
 
 /**
  * Unified diff engine.
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 final class UnifiedDiff {
-    
+
+    //~ Instance fields --------------------------------------------------------
+
     private final TextDiffVisualizer.TextDiffInfo diffInfo;
-    private BufferedReader baseReader; 
+    private BufferedReader baseReader;
     private BufferedReader modifiedReader;
     private final String newline;
     private boolean baseEndsWithNewline;
     private boolean modifiedEndsWithNewline;
-    
-    private int   currentBaseLine;
-    private int   currentModifiedLine;
 
-    public UnifiedDiff(TextDiffVisualizer.TextDiffInfo diffInfo) {
+    private int currentBaseLine;
+    private int currentModifiedLine;
+
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new UnifiedDiff object.
+     *
+     * @param  diffInfo  DOCUMENT ME!
+     */
+    public UnifiedDiff(final TextDiffVisualizer.TextDiffInfo diffInfo) {
         this.diffInfo = diffInfo;
         currentBaseLine = 1;
         currentModifiedLine = 1;
         this.newline = System.getProperty("line.separator");
     }
-    
+
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
     public String computeDiff() throws IOException {
         baseReader = checkEndingNewline(diffInfo.createFirstReader(), true);
         modifiedReader = checkEndingNewline(diffInfo.createSecondReader(), false);
-        
-        StringBuilder buffer = new StringBuilder();
+
+        final StringBuilder buffer = new StringBuilder();
         buffer.append("--- ");
         buffer.append(diffInfo.getName1());
         buffer.append(newline);
         buffer.append("+++ ");
         buffer.append(diffInfo.getName2());
         buffer.append(newline);
-        
-        Difference[] diffs = diffInfo.getDifferences();
-        
-        for (int currentDifference = 0; currentDifference < diffs.length; ) {
+
+        final Difference[] diffs = diffInfo.getDifferences();
+
+        for (int currentDifference = 0; currentDifference < diffs.length;) {
             // the new hunk will span differences from currentDifference to lastDifference (exclusively)
-            int lastDifference = getLastIndex(currentDifference);
-            Hunk hunk = computeHunk(currentDifference, lastDifference);
+            final int lastDifference = getLastIndex(currentDifference);
+            final Hunk hunk = computeHunk(currentDifference, lastDifference);
             dumpHunk(buffer, hunk);
             currentDifference = lastDifference;
         }
-        
+
         return buffer.toString();
     }
-    
-    private BufferedReader checkEndingNewline(Reader reader, boolean isBase) throws IOException {
-        StringWriter sw = new StringWriter();
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   reader  DOCUMENT ME!
+     * @param   isBase  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private BufferedReader checkEndingNewline(final Reader reader, final boolean isBase) throws IOException {
+        final StringWriter sw = new StringWriter();
         copyStreamsCloseAll(sw, reader);
-        String s = sw.toString();
-        char endingChar = s.length() == 0 ? 0 : s.charAt(s.length() - 1);
+        final String s = sw.toString();
+        final char endingChar = (s.length() == 0) ? 0 : s.charAt(s.length() - 1);
         if (isBase) {
-            baseEndsWithNewline = endingChar == '\n' || endingChar == '\r';
+            baseEndsWithNewline = (endingChar == '\n') || (endingChar == '\r');
         } else {
-            modifiedEndsWithNewline = endingChar == '\n' || endingChar == '\r';
+            modifiedEndsWithNewline = (endingChar == '\n') || (endingChar == '\r');
         }
         return new BufferedReader(new StringReader(s));
     }
 
-    private Hunk computeHunk(int firstDifference, int lastDifference) throws IOException {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   firstDifference  DOCUMENT ME!
+     * @param   lastDifference   DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private Hunk computeHunk(final int firstDifference, final int lastDifference) throws IOException {
+        final Hunk hunk = new Hunk();
 
-        Hunk hunk = new Hunk();
-        
-        Difference firstDiff = diffInfo.getDifferences()[firstDifference];
+        final Difference firstDiff = diffInfo.getDifferences()[firstDifference];
         int contextLines = diffInfo.getContextNumLines();
 
         int skipLines;
@@ -129,90 +174,149 @@ final class UnifiedDiff {
             }
             skipLines = firstDiff.getFirstStart() - contextLines - currentBaseLine;
         }
-        
+
         // move file pointers to the beginning of hunk
         while (skipLines-- > 0) {
             readLine(baseReader);
             readLine(modifiedReader);
         }
-        
+
         hunk.baseStart = currentBaseLine;
         hunk.modifiedStart = currentModifiedLine;
-        
+
         // output differences with possible contextual lines in-between
         for (int i = firstDifference; i < lastDifference; i++) {
-            Difference diff = diffInfo.getDifferences()[i];
-            writeContextLines(hunk, diff.getFirstStart() - currentBaseLine + ((diff.getType() == Difference.ADD) ? 1 : 0));
-            
+            final Difference diff = diffInfo.getDifferences()[i];
+            writeContextLines(
+                hunk,
+                diff.getFirstStart()
+                        - currentBaseLine
+                        + ((diff.getType() == Difference.ADD) ? 1 : 0));
+
             if (diff.getFirstEnd() > 0) {
-                int n = diff.getFirstEnd() - diff.getFirstStart() + 1;
+                final int n = diff.getFirstEnd() - diff.getFirstStart() + 1;
                 outputLines(hunk, baseReader, "-", n);
                 hunk.baseCount += n;
-                if (!baseEndsWithNewline && i == diffInfo.getDifferences().length - 1 && diff.getFirstEnd() == currentBaseLine - 1) {
+                if (!baseEndsWithNewline && (i == (diffInfo.getDifferences().length - 1))
+                            && (diff.getFirstEnd() == (currentBaseLine - 1))) {
                     hunk.lines.add(Hunk.ENDING_NEWLINE);
                 }
             }
             if (diff.getSecondEnd() > 0) {
-                int n = diff.getSecondEnd() - diff.getSecondStart() + 1;
+                final int n = diff.getSecondEnd() - diff.getSecondStart() + 1;
                 outputLines(hunk, modifiedReader, "+", n);
                 hunk.modifiedCount += n;
-                if (!modifiedEndsWithNewline && i == diffInfo.getDifferences().length - 1 && diff.getSecondEnd() == currentModifiedLine - 1) {
+                if (!modifiedEndsWithNewline && (i == (diffInfo.getDifferences().length - 1))
+                            && (diff.getSecondEnd() == (currentModifiedLine - 1))) {
                     hunk.lines.add(Hunk.ENDING_NEWLINE);
                 }
             }
         }
-        
-        // output bottom context lines 
+
+        // output bottom context lines
         writeContextLines(hunk, diffInfo.getContextNumLines());
-        
-        if (hunk.modifiedCount == 0) hunk.modifiedStart = 0;    // empty file
-        if (hunk.baseCount == 0) hunk.baseStart = 0;    // empty file
+
+        if (hunk.modifiedCount == 0) {
+            hunk.modifiedStart = 0; // empty file
+        }
+        if (hunk.baseCount == 0) {
+            hunk.baseStart = 0;     // empty file
+        }
         return hunk;
     }
-    
-    private void writeContextLines(Hunk hunk, int count) throws IOException {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   hunk   DOCUMENT ME!
+     * @param   count  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private void writeContextLines(final Hunk hunk, int count) throws IOException {
         while (count-- > 0) {
-            String line = readLine(baseReader);
-            if (line == null) return;
+            final String line = readLine(baseReader);
+            if (line == null) {
+                return;
+            }
             hunk.lines.add(" " + line);
-            readLine(modifiedReader);  // move the modified file pointer as well
+            readLine(modifiedReader); // move the modified file pointer as well
             hunk.baseCount++;
             hunk.modifiedCount++;
         }
     }
 
-    private String readLine(BufferedReader reader) throws IOException {
-        String s = reader.readLine();
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   reader  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private String readLine(final BufferedReader reader) throws IOException {
+        final String s = reader.readLine();
         if (s != null) {
-            if (reader == baseReader) currentBaseLine++;
-            if (reader == modifiedReader) currentModifiedLine++;
+            if (reader == baseReader) {
+                currentBaseLine++;
+            }
+            if (reader == modifiedReader) {
+                currentModifiedLine++;
+            }
         }
         return s;
     }
 
-    private void outputLines(Hunk hunk, BufferedReader reader, String mode, int n) throws IOException {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   hunk    DOCUMENT ME!
+     * @param   reader  DOCUMENT ME!
+     * @param   mode    DOCUMENT ME!
+     * @param   n       DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private void outputLines(final Hunk hunk, final BufferedReader reader, final String mode, int n)
+            throws IOException {
         while (n-- > 0) {
-            String line = readLine(reader);
+            final String line = readLine(reader);
             hunk.lines.add(mode + line);
         }
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   firstIndex  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     private int getLastIndex(int firstIndex) {
-        int contextLines = diffInfo.getContextNumLines() * 2;
-        Difference [] diffs = diffInfo.getDifferences();
+        final int contextLines = diffInfo.getContextNumLines() * 2;
+        final Difference[] diffs = diffInfo.getDifferences();
         for (++firstIndex; firstIndex < diffs.length; firstIndex++) {
-            Difference prevDiff = diffs[firstIndex - 1]; 
-            Difference currentDiff = diffs[firstIndex];
-            int prevEnd = 1 + ((prevDiff.getType() == Difference.ADD) ? prevDiff.getFirstStart() : prevDiff.getFirstEnd());
-            int curStart = (currentDiff.getType() == Difference.ADD) ? (currentDiff.getFirstStart() + 1) : currentDiff.getFirstStart();
-            if (curStart - prevEnd > contextLines) {
+            final Difference prevDiff = diffs[firstIndex - 1];
+            final Difference currentDiff = diffs[firstIndex];
+            final int prevEnd = 1
+                        + ((prevDiff.getType() == Difference.ADD) ? prevDiff.getFirstStart() : prevDiff.getFirstEnd());
+            final int curStart = (currentDiff.getType() == Difference.ADD) ? (currentDiff.getFirstStart() + 1)
+                                                                           : currentDiff.getFirstStart();
+            if ((curStart - prevEnd) > contextLines) {
                 break;
             }
         }
         return firstIndex;
     }
-    
-    private void dumpHunk(StringBuilder buffer, Hunk hunk) {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  buffer  DOCUMENT ME!
+     * @param  hunk    DOCUMENT ME!
+     */
+    private void dumpHunk(final StringBuilder buffer, final Hunk hunk) {
         buffer.append("@@ -");
         buffer.append(Integer.toString(hunk.baseStart));
         if (hunk.baseCount != 1) {
@@ -227,14 +331,22 @@ final class UnifiedDiff {
         }
         buffer.append(" @@");
         buffer.append(newline);
-        for (String line : hunk.lines) {
+        for (final String line : hunk.lines) {
             buffer.append(line);
             buffer.append(newline);
         }
     }
 
-    private static void copyStreamsCloseAll(Writer writer, Reader reader) throws IOException {
-        char [] buffer = new char[4096];
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   writer  DOCUMENT ME!
+     * @param   reader  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private static void copyStreamsCloseAll(final Writer writer, final Reader reader) throws IOException {
+        final char[] buffer = new char[4096];
         int n;
         while ((n = reader.read(buffer)) != -1) {
             writer.write(buffer, 0, n);

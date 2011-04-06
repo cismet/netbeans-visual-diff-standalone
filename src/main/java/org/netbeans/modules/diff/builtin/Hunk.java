@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -48,15 +55,20 @@ import java.util.*;
 /**
  * One unidiff or context hunk.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 public final class Hunk {
-    
+
+    //~ Static fields/initializers ---------------------------------------------
+
     public static final String ENDING_NEWLINE = "\\ No newline at end of file";
-    
+
+    //~ Instance fields --------------------------------------------------------
+
     public int baseStart;
     public int baseCount;
-    public int modifiedStart; 
+    public int modifiedStart;
     public int modifiedCount;
-    public List<String> lines = new ArrayList<String>(); 
+    public List<String> lines = new ArrayList<String>();
 }

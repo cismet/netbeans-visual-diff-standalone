@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -48,11 +55,19 @@ import java.io.IOException;
 /**
  * The patch is invalid or cannot be applied on the specified file.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 public final class PatchException extends IOException {
 
-    public PatchException(String msg) {
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new PatchException object.
+     *
+     * @param  msg  DOCUMENT ME!
+     */
+    public PatchException(final String msg) {
         super(msg);
     }
 }

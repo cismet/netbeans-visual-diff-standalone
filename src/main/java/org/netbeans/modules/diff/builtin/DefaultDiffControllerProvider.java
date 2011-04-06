@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,27 +50,33 @@
  */
 package org.netbeans.modules.diff.builtin;
 
-import org.netbeans.spi.diff.DiffControllerProvider;
-import org.netbeans.spi.diff.DiffControllerImpl;
 import org.netbeans.api.diff.StreamSource;
 import org.netbeans.modules.diff.builtin.visualizer.editable.EditableDiffView;
+import org.netbeans.spi.diff.DiffControllerImpl;
+import org.netbeans.spi.diff.DiffControllerProvider;
 
 import java.io.IOException;
 
 /**
  * Default implementation of DiffControllerProvider.
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
-@org.openide.util.lookup.ServiceProvider(service=org.netbeans.spi.diff.DiffControllerProvider.class)
+@org.openide.util.lookup.ServiceProvider(service = org.netbeans.spi.diff.DiffControllerProvider.class)
 public class DefaultDiffControllerProvider extends DiffControllerProvider {
 
-    public DiffControllerImpl createDiffController(StreamSource base, StreamSource modified) throws IOException {
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
+    public DiffControllerImpl createDiffController(final StreamSource base, final StreamSource modified)
+            throws IOException {
         return new EditableDiffView(base, modified);
     }
 
     @Override
-    public DiffControllerImpl createEnhancedDiffController(StreamSource base, StreamSource modified) throws IOException {
+    public DiffControllerImpl createEnhancedDiffController(final StreamSource base, final StreamSource modified)
+            throws IOException {
         return new EditableDiffView(base, modified, true);
     }
 }

@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,24 +50,28 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
-import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
+
+import javax.swing.*;
 
 /**
  * Centered label mostly used to indicate that there is nothing in a view.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 class NoContentPanel extends JPanel {
 
+    //~ Instance fields --------------------------------------------------------
+
     private JLabel label = new JLabel();
 
-    public NoContentPanel(String text) {
-        this();
-        label.setText(text);
-    }
+    //~ Constructors -----------------------------------------------------------
 
+    /**
+     * Creates a new NoContentPanel object.
+     */
     public NoContentPanel() {
         this.setBackground(UIManager.getColor("TextArea.background")); // NOI18N
         setLayout(new BorderLayout());
@@ -69,8 +80,25 @@ class NoContentPanel extends JPanel {
         label.setEnabled(false);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
-    
-    public void setLabel(String text) {
+
+    /**
+     * Creates a new NoContentPanel object.
+     *
+     * @param  text  DOCUMENT ME!
+     */
+    public NoContentPanel(final String text) {
+        this();
+        label.setText(text);
+    }
+
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  text  DOCUMENT ME!
+     */
+    public void setLabel(final String text) {
         label.setText(text);
     }
 }

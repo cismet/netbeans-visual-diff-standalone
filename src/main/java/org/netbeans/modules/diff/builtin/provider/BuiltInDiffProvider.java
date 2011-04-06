@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -41,97 +48,131 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.diff.builtin.provider;
+
+import org.netbeans.api.diff.Difference;
+import org.netbeans.modules.diff.DiffModuleConfig;
+import org.netbeans.spi.diff.DiffProvider;
+
+import org.openide.util.NbBundle;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openide.util.NbBundle;
-
-import org.netbeans.api.diff.Difference;
-import org.netbeans.spi.diff.DiffProvider;
-import org.netbeans.modules.diff.DiffModuleConfig;
-
 /**
+ * DOCUMENT ME!
  *
- * @author  Martin Entlicher
+ * @author   Martin Entlicher
+ * @version  $Revision$, $Date$
  */
 public class BuiltInDiffProvider extends DiffProvider implements java.io.Serializable {
 
-    private Options options = DiffModuleConfig.getDefault().getOptions();
-    
+    //~ Static fields/initializers ---------------------------------------------
+
     static final long serialVersionUID = 1L;
 
-    /** Creates a new instance of BuiltInDiffProvider */
+    //~ Instance fields --------------------------------------------------------
+
+    private Options options = DiffModuleConfig.getDefault().getOptions();
+
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new instance of BuiltInDiffProvider.
+     */
     public BuiltInDiffProvider() {
     }
-    
+
+    //~ Methods ----------------------------------------------------------------
+
     /**
      * Get the display name of this diff provider.
+     *
+     * @return  DOCUMENT ME!
      */
     public String getDisplayName() {
         return NbBundle.getMessage(BuiltInDiffProvider.class, "BuiltInDiffProvider.displayName");
     }
-    
+
     /**
      * Get a short description of this diff provider.
+     *
+     * @return  DOCUMENT ME!
      */
     public String getShortDescription() {
         return NbBundle.getMessage(BuiltInDiffProvider.class, "BuiltInDiffProvider.shortDescription");
     }
-    
+
     /**
      * Create the differences of the content two streams.
-     * @param r1 the first source
-     * @param r2 the second source to be compared with the first one.
-     * @return the list of differences found, instances of {@link Difference};
-     *        or <code>null</code> when some error occured.
+     *
+     * @param   r1  the first source
+     * @param   r2  the second source to be compared with the first one.
+     *
+     * @return  the list of differences found, instances of {@link Difference}; or <code>null</code> when some error
+     *          occured.
+     *
+     * @throws  IOException  DOCUMENT ME!
      */
-    public Difference[] computeDiff(Reader r1, Reader r2) throws IOException {
+    @Override
+    public Difference[] computeDiff(final Reader r1, final Reader r2) throws IOException {
         if (options == null) {
             // blind fix of #144033, probably a deserialization issue?
             options = DiffModuleConfig.getDefault().getOptions();
         }
-        return HuntDiff.diff(getLines(r1), getLines(r2), options);   
+        return HuntDiff.diff(getLines(r1), getLines(r2), options);
     }
-    
-    private String[] getLines(Reader r) throws IOException {
-        BufferedReader br = new BufferedReader(r);
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   r  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private String[] getLines(final Reader r) throws IOException {
+        final BufferedReader br = new BufferedReader(r);
         String line;
-        List<String> lines = new ArrayList<String>();
+        final List<String> lines = new ArrayList<String>();
         while ((line = br.readLine()) != null) {
             lines.add(line);
         }
         return lines.toArray(new String[lines.size()]);
     }
 
-
     /**
-     * @param options a new set of diff options
+     * DOCUMENT ME!
+     *
+     * @param  options  a new set of diff options
      */
-    public void setOptions(Options options) {
+    public void setOptions(final Options options) {
         this.options = options;
     }
 
+    //~ Inner Classes ----------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @version  $Revision$, $Date$
+     */
     public static class Options {
-        /**
-         * True to ignore leading and trailing whitespace when computing diff, false otherwise.
-         */
+
+        //~ Instance fields ----------------------------------------------------
+
+        /** True to ignore leading and trailing whitespace when computing diff, false otherwise. */
         public boolean ignoreLeadingAndtrailingWhitespace;
 
-        /**
-         * True to ignore inner (not leading or trailing) whitespace when computing diff, false otherwise.
-         */
+        /** True to ignore inner (not leading or trailing) whitespace when computing diff, false otherwise. */
         public boolean ignoreInnerWhitespace;
 
-        /**
-         * True to ignore changes in case.
-         */
+        /** True to ignore changes in case. */
         public boolean ignoreCase;
     }
-    
 }

@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -41,34 +48,43 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.diff.builtin.visualizer;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.List;
+
 import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.*;
 
 /**
  * Filter out popup menu triggering events.
  *
- * @author Petr Kuzel
+ * @author   Petr Kuzel
+ * @version  $Revision$, $Date$
  */
 public class DEditorPane extends JEditorPane {
 
+    //~ Instance fields --------------------------------------------------------
+
     private List popupActions;
 
-    protected void processMouseEvent(MouseEvent e) {
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
+    protected void processMouseEvent(final MouseEvent e) {
         if (e.isPopupTrigger() == false) {
             super.processMouseEvent(e);
         } else {
             if (popupActions != null) {
-                JPopupMenu popup = new JPopupMenu();
-                Iterator it = popupActions.iterator();
+                final JPopupMenu popup = new JPopupMenu();
+                final Iterator it = popupActions.iterator();
                 int actions = 0;
                 while (it.hasNext()) {
-                    Action action = (Action) it.next();
-                    if (action == null) continue;
+                    final Action action = (Action)it.next();
+                    if (action == null) {
+                        continue;
+                    }
                     popup.add(action);
                     actions++;
                 }
@@ -80,7 +96,12 @@ public class DEditorPane extends JEditorPane {
         }
     }
 
-    public void setPopupActions(List actions) {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  actions  DOCUMENT ME!
+     */
+    public void setPopupActions(final List actions) {
         popupActions = actions;
     }
 }

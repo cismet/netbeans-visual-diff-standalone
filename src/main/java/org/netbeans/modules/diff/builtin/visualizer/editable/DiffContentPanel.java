@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -41,48 +48,63 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
 import org.netbeans.api.diff.Difference;
+import org.netbeans.spi.editor.highlighting.HighlightsChangeEvent;
+import org.netbeans.spi.editor.highlighting.HighlightsChangeListener;
 import org.netbeans.spi.editor.highlighting.HighlightsContainer;
 import org.netbeans.spi.editor.highlighting.HighlightsSequence;
-import org.netbeans.spi.editor.highlighting.HighlightsChangeListener;
-import org.netbeans.spi.editor.highlighting.HighlightsChangeEvent;
+
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
+
+import java.awt.*;
+
+import java.util.*;
+import java.util.List;
+
+import javax.accessibility.AccessibleContext;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.EditorKit;
-import javax.accessibility.AccessibleContext;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-import org.netbeans.editor.BaseTextUI;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Represents left and/or right side of the main split pane.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
-class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Provider {
+class DiffContentPanel extends JPanel implements HighlightsContainer, Lookup.Provider {
+
+    //~ Instance fields --------------------------------------------------------
 
     private final EditableDiffView master;
     private final boolean isFirst;
 
-    private final DecoratedEditorPane     editorPane;
-    private JScrollPane                   scrollPane;
-    private final LineNumbersActionsBar   linesActions;
-    private final JScrollPane             actionsScrollPane;
+    private final DecoratedEditorPane editorPane;
+    private JScrollPane scrollPane;
+    private final LineNumbersActionsBar linesActions;
+    private final JScrollPane actionsScrollPane;
 
     private Difference[] currentDiff;
-    
-    public DiffContentPanel(EditableDiffView master, boolean isFirst) {
+
+    private final List<HighlightsChangeListener> listeners = new ArrayList<HighlightsChangeListener>(1);
+
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new DiffContentPanel object.
+     *
+     * @param  master   DOCUMENT ME!
+     * @param  isFirst  DOCUMENT ME!
+     */
+    public DiffContentPanel(final EditableDiffView master, final boolean isFirst) {
         this.master = master;
         this.isFirst = isFirst;
-        
+
         setLayout(new BorderLayout());
 
         editorPane = new DecoratedEditorPane(this);
@@ -90,46 +112,58 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
 
         scrollPane = new JScrollPane(editorPane);
         add(scrollPane);
-        
+
         linesActions = new LineNumbersActionsBar(this, master.isActionsEnabled());
         actionsScrollPane = new JScrollPane(linesActions);
         actionsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         actionsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         actionsScrollPane.setBorder(null);
         add(actionsScrollPane, isFirst ? BorderLayout.LINE_END : BorderLayout.LINE_START);
-        
+
         editorPane.putClientProperty(DiffHighlightsLayerFactory.HIGHLITING_LAYER_ID, this);
         if (!isFirst) {
             editorPane.putClientProperty("errorStripeOnly", Boolean.TRUE);
             editorPane.putClientProperty("code-folding-enable", false);
         }
     }
-    
+
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     */
     void initActions() {
-        //TODO: copied from CloneableEditor - this has no effect
-        ActionMap paneMap = editorPane.getActionMap();
-        ActionMap am = getActionMap();
+        // TODO: copied from CloneableEditor - this has no effect
+        final ActionMap paneMap = editorPane.getActionMap();
+        final ActionMap am = getActionMap();
         am.setParent(paneMap);
         paneMap.put(DefaultEditorKit.cutAction, getAction(DefaultEditorKit.cutAction));
         paneMap.put(DefaultEditorKit.copyAction, getAction(DefaultEditorKit.copyAction));
         paneMap.put("delete", getAction(DefaultEditorKit.deleteNextCharAction)); // NOI18N
         paneMap.put(DefaultEditorKit.pasteAction, getAction(DefaultEditorKit.pasteAction));
     }
-    
-    private Action getAction(String key) {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   key  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
+    private Action getAction(final String key) {
         if (key == null) {
             return null;
         }
 
         // Try to find the action from kit.
-        EditorKit kit = editorPane.getEditorKit();
+        final EditorKit kit = editorPane.getEditorKit();
 
         if (kit == null) { // kit is cleared in closeDocument()
 
             return null;
         }
 
-        Action[] actions = kit.getActions();
+        final Action[] actions = kit.getActions();
 
         for (int i = 0; i < actions.length; i++) {
             if (key.equals(actions[i].getValue(Action.NAME))) {
@@ -139,28 +173,58 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
 
         return null;
     }
-    
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     LineNumbersActionsBar getLinesActions() {
         return linesActions;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public JScrollPane getActionsScrollPane() {
         return actionsScrollPane;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public JScrollPane getScrollPane() {
         return scrollPane;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public Difference[] getCurrentDiff() {
         return currentDiff;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public boolean isFirst() {
         return isFirst;
     }
 
-    public void setCurrentDiff(Difference[] currentDiff) {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  currentDiff  DOCUMENT ME!
+     */
+    public void setCurrentDiff(final Difference[] currentDiff) {
         this.currentDiff = currentDiff;
         editorPane.setDifferences(currentDiff);
         linesActions.onDiffSetChanged();
@@ -168,9 +232,10 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
 //        revalidate();
     }
 
+    @Override
     public Dimension getPreferredSize() {
         Dimension d = super.getPreferredSize();
-        Container parent = getParent();
+        final Container parent = getParent();
         if (parent instanceof JViewport) {
             if (parent.getWidth() > d.width) {
                 d = new Dimension(parent.getWidth(), d.height);
@@ -179,50 +244,71 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
         return d;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public DecoratedEditorPane getEditorPane() {
         return editorPane;
     }
 
+    @Override
     public AccessibleContext getAccessibleContext() {
         return editorPane.getAccessibleContext();
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public EditableDiffView getMaster() {
         return master;
     }
 
-    // === Highliting ======================================================================== 
-    
+    /**
+     * === Highliting ========================================================================.
+     *
+     * @return  DOCUMENT ME!
+     */
     HighlightsContainer getHighlightsContainer() {
         return this;
     }
 
-    public HighlightsSequence getHighlights(int start, int end) {
+    @Override
+    public HighlightsSequence getHighlights(final int start, final int end) {
         return new DiffHighlightsSequence(start, end);
     }
 
-    private final List<HighlightsChangeListener> listeners = new ArrayList<HighlightsChangeListener>(1);
-    
-    public void addHighlightsChangeListener(HighlightsChangeListener listener) {
-        synchronized(listeners) {
+    @Override
+    public void addHighlightsChangeListener(final HighlightsChangeListener listener) {
+        synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public void removeHighlightsChangeListener(HighlightsChangeListener listener) {
-        synchronized(listeners) {
+    @Override
+    public void removeHighlightsChangeListener(final HighlightsChangeListener listener) {
+        synchronized (listeners) {
             listeners.remove(listener);
         }
     }
-    
+
+    /**
+     * DOCUMENT ME!
+     */
     void fireHilitingChanged() {
-        synchronized(listeners) {
-            for (HighlightsChangeListener listener : listeners) {
-              listener.highlightChanged(new HighlightsChangeEvent(this, 0, Integer.MAX_VALUE));
+        synchronized (listeners) {
+            for (final HighlightsChangeListener listener : listeners) {
+                listener.highlightChanged(new HighlightsChangeEvent(this, 0, Integer.MAX_VALUE));
             }
         }
     }
 
+    /**
+     * DOCUMENT ME!
+     */
     void onUISettingsChanged() {
         editorPane.repaint();
         linesActions.onUISettingsChanged();
@@ -231,8 +317,13 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
         revalidate();
         repaint();
     }
-    
-    public void setCustomEditor(JComponent c) {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  c  DOCUMENT ME!
+     */
+    public void setCustomEditor(final JComponent c) {
         remove(scrollPane);
         // The present editorPane will already be wrapped with the new custom editor
         // including the new scrollpane that needs to be re-assigned
@@ -246,52 +337,83 @@ class DiffContentPanel extends JPanel implements HighlightsContainer,Lookup.Prov
         }
     }
 
+    @Override
     public Lookup getLookup() {
         return Lookups.singleton(getActionMap());
     }
 
+    //~ Inner Classes ----------------------------------------------------------
+
     /**
      * Iterates over all found differences.
+     *
+     * @version  $Revision$, $Date$
      */
     private class DiffHighlightsSequence implements HighlightsSequence {
-        
-        private final int       endOffset;
-        private final int       startOffset;
 
-        private int             currentHiliteIndex = -1;             
-        private DiffViewManager.HighLight [] hilites;
+        //~ Instance fields ----------------------------------------------------
 
-        public DiffHighlightsSequence(int start, int end) {
+        private final int endOffset;
+        private final int startOffset;
+
+        private int currentHiliteIndex = -1;
+        private DiffViewManager.HighLight[] hilites;
+
+        //~ Constructors -------------------------------------------------------
+
+        /**
+         * Creates a new DiffHighlightsSequence object.
+         *
+         * @param  start  DOCUMENT ME!
+         * @param  end    DOCUMENT ME!
+         */
+        public DiffHighlightsSequence(final int start, final int end) {
             this.startOffset = start;
             this.endOffset = end;
             lookupHilites();
         }
 
+        //~ Methods ------------------------------------------------------------
+
+        /**
+         * DOCUMENT ME!
+         */
         private void lookupHilites() {
-            List<DiffViewManager.HighLight> list = new ArrayList<DiffViewManager.HighLight>();
-            DiffViewManager.HighLight[] allHilites = isFirst ? master.getManager().getFirstHighlights() : master.getManager().getSecondHighlights(); 
-            for (DiffViewManager.HighLight hilite : allHilites) {
-                if (hilite.getEndOffset() < startOffset) continue;
-                if (hilite.getStartOffset() > endOffset) break;
+            final List<DiffViewManager.HighLight> list = new ArrayList<DiffViewManager.HighLight>();
+            final DiffViewManager.HighLight[] allHilites = isFirst ? master.getManager().getFirstHighlights()
+                                                                   : master.getManager().getSecondHighlights();
+            for (final DiffViewManager.HighLight hilite : allHilites) {
+                if (hilite.getEndOffset() < startOffset) {
+                    continue;
+                }
+                if (hilite.getStartOffset() > endOffset) {
+                    break;
+                }
                 list.add(hilite);
             }
             hilites = list.toArray(new DiffViewManager.HighLight[list.size()]);
         }
 
+        @Override
         public boolean moveNext() {
-            if (currentHiliteIndex >= hilites.length - 1) return false;
+            if (currentHiliteIndex >= (hilites.length - 1)) {
+                return false;
+            }
             currentHiliteIndex++;
             return true;
         }
 
+        @Override
         public int getStartOffset() {
             return Math.max(hilites[currentHiliteIndex].getStartOffset(), this.startOffset);
         }
 
+        @Override
         public int getEndOffset() {
             return Math.min(hilites[currentHiliteIndex].getEndOffset(), this.endOffset);
         }
 
+        @Override
         public AttributeSet getAttributes() {
             return hilites[currentHiliteIndex].getAttrs();
         }

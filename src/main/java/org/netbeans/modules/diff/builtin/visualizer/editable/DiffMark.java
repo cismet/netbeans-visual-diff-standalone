@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,27 +50,40 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
+import org.netbeans.api.diff.Difference;
 import org.netbeans.modules.editor.errorstripe.privatespi.Mark;
 import org.netbeans.modules.editor.errorstripe.privatespi.Status;
-import org.netbeans.api.diff.Difference;
 
 import java.awt.Color;
 
 /**
  * Error stripe mark for differences.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 final class DiffMark implements Mark {
+
+    //~ Instance fields --------------------------------------------------------
 
     private final int[] span;
     private final Color color;
     private final String desc;
 
-    public DiffMark(Difference difference, Color color) {
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new DiffMark object.
+     *
+     * @param  difference  DOCUMENT ME!
+     * @param  color       DOCUMENT ME!
+     */
+    public DiffMark(final Difference difference, final Color color) {
         if (difference.getType() == Difference.DELETE) {
             int start = difference.getSecondStart() - 1;
-            if (start < 0) start = 0;
+            if (start < 0) {
+                start = 0;
+            }
             span = new int[] { start, start };
         } else {
             span = new int[] { difference.getSecondStart() - 1, difference.getSecondEnd() - 1 };
@@ -72,26 +92,34 @@ final class DiffMark implements Mark {
         desc = ""; // NOI18N
     }
 
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
     public int getType() {
         return TYPE_ERROR_LIKE;
     }
 
+    @Override
     public Status getStatus() {
         return Status.STATUS_OK;
     }
 
+    @Override
     public int getPriority() {
         return Integer.MIN_VALUE;
     }
 
+    @Override
     public Color getEnhancedColor() {
         return color;
     }
 
+    @Override
     public int[] getAssignedLines() {
         return span;
     }
 
+    @Override
     public String getShortDescription() {
         return desc;
     }

@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -41,91 +48,117 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.diff.builtin;
 
+import org.netbeans.api.diff.Difference;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
+import org.netbeans.spi.diff.*;
+
+import org.openide.ErrorManager;
+import org.openide.explorer.propertysheet.DefaultPropertyModel;
+import org.openide.explorer.propertysheet.ExPropertyEditor;
+import org.openide.explorer.propertysheet.PropertyModel;
+import org.openide.explorer.propertysheet.PropertyPanel;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataFolder;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.loaders.InstanceDataObject;
+import org.openide.nodes.Node;
+import org.openide.util.NbBundle;
+import org.openide.util.RequestProcessor;
+import org.openide.windows.TopComponent;
+
 import java.awt.*;
+
 //import java.awt.event.ItemEvent;
 //import java.awt.event.ItemListener;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditorManager;
+
 import java.io.FileNotFoundException;
-import java.io.Reader;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-
-import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.api.progress.ProgressHandleFactory;
-
-import org.openide.explorer.propertysheet.ExPropertyEditor;
-import org.openide.explorer.propertysheet.PropertyModel;
-import org.openide.explorer.propertysheet.PropertyPanel;
-import org.openide.explorer.propertysheet.DefaultPropertyModel;
-import org.openide.filesystems.FileObject;
-import org.openide.loaders.DataFolder;
-import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.nodes.Node;
-import org.openide.windows.TopComponent;
-
-import org.netbeans.api.diff.Difference;
-import org.netbeans.spi.diff.*;
-import org.openide.loaders.InstanceDataObject;
-import org.openide.util.NbBundle;
-import org.openide.util.RequestProcessor;
-import org.openide.util.Task;
-import org.openide.ErrorManager;
+import java.io.Reader;
 
 import javax.swing.*;
-import org.openide.filesystems.FileUtil;
 
 /**
  * This panel is to be used as a wrapper for diff visualizers.
- * @author  Martin Entlicher
+ *
+ * @author   Martin Entlicher
+ * @version  $Revision$, $Date$
  */
 public class DiffPresenter extends javax.swing.JPanel {
-    
-    public static final String PROP_PROVIDER = "provider"; // NOI18N
+
+    //~ Static fields/initializers ---------------------------------------------
+
+    public static final String PROP_PROVIDER = "provider";     // NOI18N
     public static final String PROP_VISUALIZER = "visualizer"; // NOI18N
-    
+
     public static final String PROP_TOOLBAR = "DiffPresenter.toolbarPanel"; // NOI18N
-    
+
+    //~ Instance fields --------------------------------------------------------
+
     private DiffPresenter.Info diffInfo;
     private DiffProvider defaultProvider;
     private DiffVisualizer defaultVisualizer;
     private JComponent progressPanel;
 
-    /**
-     * Interruptible (to be able to drop streams of deadlocked
-     * external program) request processor.
-     */
+    /** Interruptible (to be able to drop streams of deadlocked external program) request processor. */
     private final RequestProcessor diffRP = new RequestProcessor("Diff", 1, true);
 
-    private RequestProcessor.Task computationTask = diffRP.post(    // NOI28N
-            new Runnable(){public void run(){}}
-    );
-    
+    private RequestProcessor.Task computationTask = diffRP.post( // NOI28N
+            new Runnable() {
+
+                @Override
+                public void run() {
+                }
+            });
+
     private boolean added;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    javax.swing.JPanel jPanel1;
+    javax.swing.JLabel providerLabel;
+    javax.swing.JPanel servicesPanel;
+    javax.swing.JPanel toolbarPanel;
+    javax.swing.JLabel visualizerLabel;
+    javax.swing.JPanel visualizerPanel;
+    // End of variables declaration//GEN-END:variables
+
+    //~ Constructors -----------------------------------------------------------
+
     /**
-     * Creates <i>just computing diff</i> presenter. The mode
-     * is left on {@link #initWithDiffInfo} call.
+     * Creates <i>just computing diff</i> presenter. The mode is left on {@link #initWithDiffInfo} call.
      */
     public DiffPresenter() {
-        String label = NbBundle.getMessage(DiffPresenter.class, "diff.prog");
-        ProgressHandle progress = ProgressHandleFactory.createHandle(label);
+        final String label = NbBundle.getMessage(DiffPresenter.class, "diff.prog");
+        final ProgressHandle progress = ProgressHandleFactory.createHandle(label);
         progressPanel = ProgressHandleFactory.createProgressComponent(progress);
         add(progressPanel);
         progress.start();
     }
 
-    /** Creates new DiffPresenter with given content. */
-    public DiffPresenter(DiffPresenter.Info diffInfo) {
+    /**
+     * Creates new DiffPresenter with given content.
+     *
+     * @param  diffInfo  DOCUMENT ME!
+     */
+    public DiffPresenter(final DiffPresenter.Info diffInfo) {
         initWithDiffInfo(diffInfo);
     }
 
-    /** Seta actual diff content. Can be called just once. */
-    public final void initWithDiffInfo(DiffPresenter.Info diffInfo) {
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * Seta actual diff content. Can be called just once.
+     *
+     * @param  diffInfo  DOCUMENT ME!
+     */
+    public final void initWithDiffInfo(final DiffPresenter.Info diffInfo) {
         assert this.diffInfo == null;
         this.diffInfo = diffInfo;
         if (progressPanel != null) {
@@ -133,14 +166,19 @@ public class DiffPresenter extends javax.swing.JPanel {
         }
         initComponents();
         initMyComponents();
-        providerLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_ProviderA11yDesc"));  // NOI18N
-        visualizerLabel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_VisualizerA11yDesc"));  // NOI18N
+        providerLabel.getAccessibleContext()
+                .setAccessibleDescription(org.openide.util.NbBundle.getMessage(
+                        DiffPresenter.class,
+                        "ACS_ProviderA11yDesc"));   // NOI18N
+        visualizerLabel.getAccessibleContext()
+                .setAccessibleDescription(org.openide.util.NbBundle.getMessage(
+                        DiffPresenter.class,
+                        "ACS_VisualizerA11yDesc")); // NOI18N
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
+     * content of this method is always regenerated by the Form Editor.
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -164,14 +202,18 @@ public class DiffPresenter extends javax.swing.JPanel {
 
         servicesPanel.setLayout(new java.awt.GridBagLayout());
 
-        org.openide.awt.Mnemonics.setLocalizedText(providerLabel, org.openide.util.NbBundle.getMessage(DiffPresenter.class, "LBL_Provider"));
+        org.openide.awt.Mnemonics.setLocalizedText(
+            providerLabel,
+            org.openide.util.NbBundle.getMessage(DiffPresenter.class, "LBL_Provider"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         servicesPanel.add(providerLabel, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(visualizerLabel, org.openide.util.NbBundle.getMessage(DiffPresenter.class, "LBL_Visualizer"));
+        org.openide.awt.Mnemonics.setLocalizedText(
+            visualizerLabel,
+            org.openide.util.NbBundle.getMessage(DiffPresenter.class, "LBL_Visualizer"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -194,78 +236,86 @@ public class DiffPresenter extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         add(visualizerPanel, gridBagConstraints);
+    } // </editor-fold>//GEN-END:initComponents
 
-    }// </editor-fold>//GEN-END:initComponents
-    
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    javax.swing.JPanel jPanel1;
-    javax.swing.JLabel providerLabel;
-    javax.swing.JPanel servicesPanel;
-    javax.swing.JPanel toolbarPanel;
-    javax.swing.JLabel visualizerLabel;
-    javax.swing.JPanel visualizerPanel;
-    // End of variables declaration//GEN-END:variables
-    
+    /**
+     * DOCUMENT ME!
+     */
     private void initMyComponents() {
         PropertyDescriptor pd;
         PropertyModel model;
         PropertyPanel panel;
         java.awt.GridBagConstraints gridBagConstraints;
-        FileObject services = FileUtil.getConfigFile("Services");
-        DataFolder df = DataFolder.findFolder(services);
-        Object editor = PropertyEditorManager.findEditor (Object.class);
-        if (diffInfo.isChooseProviders() && editor != null) {
+        final FileObject services = FileUtil.getConfigFile("Services");
+        final DataFolder df = DataFolder.findFolder(services);
+        final Object editor = PropertyEditorManager.findEditor(Object.class);
+        if (diffInfo.isChooseProviders() && (editor != null)) {
             try {
-                pd = new PropertyDescriptor (PROP_PROVIDER, getClass ());
+                pd = new PropertyDescriptor(PROP_PROVIDER, getClass());
             } catch (java.beans.IntrospectionException intrex) {
-                return ;
+                return;
             }
-            pd.setPropertyEditorClass (editor.getClass());
+            pd.setPropertyEditorClass(editor.getClass());
             // special attributes to the property editor
-            pd.setValue ("superClass", DiffProvider.class);
-            pd.setValue ("suppressCustomEditor", Boolean.TRUE);
-            FileObject providersFO = services.getFileObject("DiffProviders");
+            pd.setValue("superClass", DiffProvider.class);
+            pd.setValue("suppressCustomEditor", Boolean.TRUE);
+            final FileObject providersFO = services.getFileObject("DiffProviders");
             try {
-                DataObject providersDO = DataObject.find(providersFO);
-                Node providersNode = providersDO.getNodeDelegate();
+                final DataObject providersDO = DataObject.find(providersFO);
+                final Node providersNode = providersDO.getNodeDelegate();
                 pd.setValue("node", providersNode);
-            } catch (DataObjectNotFoundException donfex) {}
+            } catch (DataObjectNotFoundException donfex) {
+            }
             pd.setValue(ExPropertyEditor.PROPERTY_HELP_ID, "org.netbeans.modules.diff.DiffPresenter.providers");
-            model = new DefaultPropertyModel (this, pd);
-            panel = new PropertyPanel (model, PropertyPanel.PREF_INPUT_STATE);
+            model = new DefaultPropertyModel(this, pd);
+            panel = new PropertyPanel(model, PropertyPanel.PREF_INPUT_STATE);
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 15);
             gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-            if (!diffInfo.isChooseVisualizers()) gridBagConstraints.weightx = 1.0;
+            if (!diffInfo.isChooseVisualizers()) {
+                gridBagConstraints.weightx = 1.0;
+            }
             gridBagConstraints.gridx = 1;
             servicesPanel.add(panel, gridBagConstraints);
             providerLabel.setLabelFor(panel);
-            panel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_ProviderPropertyPanelA11yName"));  // NOI18N
-            panel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_ProviderPropertyPanelA11yDesc"));  // NOI18N
+            panel.getAccessibleContext()
+                    .setAccessibleName(org.openide.util.NbBundle.getMessage(
+                            DiffPresenter.class,
+                            "ACS_ProviderPropertyPanelA11yName")); // NOI18N
+            panel.getAccessibleContext()
+                    .setAccessibleDescription(org.openide.util.NbBundle.getMessage(
+                            DiffPresenter.class,
+                            "ACS_ProviderPropertyPanelA11yDesc")); // NOI18N
         }
-        if (diffInfo.isChooseVisualizers() && editor != null) {
+        if (diffInfo.isChooseVisualizers() && (editor != null)) {
             try {
-                pd = new PropertyDescriptor (PROP_VISUALIZER, getClass ());
+                pd = new PropertyDescriptor(PROP_VISUALIZER, getClass());
             } catch (java.beans.IntrospectionException intrex) {
-                return ;
+                return;
             }
-            pd.setPropertyEditorClass (editor.getClass());
+            pd.setPropertyEditorClass(editor.getClass());
             // special attributes to the property editor
-            pd.setValue ("superClass", DiffVisualizer.class);
-            pd.setValue ("suppressCustomEditor", Boolean.TRUE);
-            FileObject visualizersFO = services.getFileObject("DiffVisualizers");
+            pd.setValue("superClass", DiffVisualizer.class);
+            pd.setValue("suppressCustomEditor", Boolean.TRUE);
+            final FileObject visualizersFO = services.getFileObject("DiffVisualizers");
             try {
-                DataObject visualizersDO = DataObject.find(visualizersFO);
-                Node visualizersNode = visualizersDO.getNodeDelegate();
+                final DataObject visualizersDO = DataObject.find(visualizersFO);
+                final Node visualizersNode = visualizersDO.getNodeDelegate();
                 pd.setValue("node", visualizersNode);
-            } catch (DataObjectNotFoundException donfex) {}
+            } catch (DataObjectNotFoundException donfex) {
+            }
             pd.setValue(ExPropertyEditor.PROPERTY_HELP_ID, "org.netbeans.modules.diff.DiffPresenter.visualizers");
-            model = new DefaultPropertyModel (this, pd);
-            panel = new PropertyPanel (model, PropertyPanel.PREF_INPUT_STATE);
-            panel.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_VisualizerPropertyPanelA11yName"));  // NOI18N
-            panel.getAccessibleContext().setAccessibleDescription(org.openide.util.NbBundle.getMessage(DiffPresenter.class, "ACS_VisualizerPropertyPanelA11yDesc"));  // NOI18N
+            model = new DefaultPropertyModel(this, pd);
+            panel = new PropertyPanel(model, PropertyPanel.PREF_INPUT_STATE);
+            panel.getAccessibleContext()
+                    .setAccessibleName(org.openide.util.NbBundle.getMessage(
+                            DiffPresenter.class,
+                            "ACS_VisualizerPropertyPanelA11yName")); // NOI18N
+            panel.getAccessibleContext()
+                    .setAccessibleDescription(org.openide.util.NbBundle.getMessage(
+                            DiffPresenter.class,
+                            "ACS_VisualizerPropertyPanelA11yDesc")); // NOI18N
 
             gridBagConstraints = new java.awt.GridBagConstraints();
             gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
@@ -275,83 +325,104 @@ public class DiffPresenter extends javax.swing.JPanel {
             servicesPanel.add(panel, gridBagConstraints);
             visualizerLabel.setLabelFor(panel);
         }
-        providerLabel.setVisible(diffInfo.isChooseProviders() && editor != null);
-        visualizerLabel.setVisible(diffInfo.isChooseVisualizers() && editor != null);
-        servicesPanel.setVisible((diffInfo.isChooseProviders() || diffInfo.isChooseVisualizers()) && editor != null);
+        providerLabel.setVisible(diffInfo.isChooseProviders() && (editor != null));
+        visualizerLabel.setVisible(diffInfo.isChooseVisualizers() && (editor != null));
+        servicesPanel.setVisible((diffInfo.isChooseProviders() || diffInfo.isChooseVisualizers()) && (editor != null));
     }
-    
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public DiffProvider getProvider() {
         return defaultProvider;
     }
 
-    /** Set the diff provider and update the view. */
-    public void setProvider(DiffProvider p) {
-        this.defaultProvider = (DiffProvider) p;
+    /**
+     * Set the diff provider and update the view.
+     *
+     * @param  p  DOCUMENT ME!
+     */
+    public void setProvider(final DiffProvider p) {
+        this.defaultProvider = (DiffProvider)p;
 
         if (added) {
-            asyncDiff((DiffProvider) p, defaultVisualizer);
+            asyncDiff((DiffProvider)p, defaultVisualizer);
             setDefaultDiffService(p, "Services/DiffProviders"); // NOI18N
         }
     }
-    
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public DiffVisualizer getVisualizer() {
         return defaultVisualizer;
     }
 
-    /** Set the diff visualizer and update the view. */
-    public void setVisualizer(DiffVisualizer v) {
-        this.defaultVisualizer = (DiffVisualizer) v;
+    /**
+     * Set the diff visualizer and update the view.
+     *
+     * @param  v  DOCUMENT ME!
+     */
+    public void setVisualizer(final DiffVisualizer v) {
+        this.defaultVisualizer = (DiffVisualizer)v;
 
         if (added) {
-            asyncDiff(defaultProvider, (DiffVisualizer) v);
+            asyncDiff(defaultProvider, (DiffVisualizer)v);
             setDefaultDiffService(v, "Services/DiffVisualizers"); // NOI18N
         }
     }
-    
-    private static void setDefaultDiffService(Object ds, String folder) {
-        //System.out.println("setDefaultDiffService("+ds+")");
-        FileObject services = FileUtil.getConfigFile(folder);
-        DataFolder df = DataFolder.findFolder(services);
-        DataObject[] children = df.getChildren();
-        //System.out.println("  Got children.");
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  ds      DOCUMENT ME!
+     * @param  folder  DOCUMENT ME!
+     */
+    private static void setDefaultDiffService(final Object ds, final String folder) {
+        // System.out.println("setDefaultDiffService("+ds+")");
+        final FileObject services = FileUtil.getConfigFile(folder);
+        final DataFolder df = DataFolder.findFolder(services);
+        final DataObject[] children = df.getChildren();
+        // System.out.println("  Got children.");
         for (int i = 0; i < children.length; i++) {
             if (children[i] instanceof InstanceDataObject) {
-                InstanceDataObject ido = (InstanceDataObject) children[i];
+                final InstanceDataObject ido = (InstanceDataObject)children[i];
                 if (ido.instanceOf(ds.getClass())) {
-                    //System.out.println("  Found an instance of my class.");
+                    // System.out.println("  Found an instance of my class.");
                     try {
                         if (ds.equals(ido.instanceCreate())) {
-                            //System.out.println("  Have it, settings the order.");
+                            // System.out.println("  Have it, settings the order.");
                             df.setOrder(new DataObject[] { ido });
                             break;
                         }
                     } catch (java.io.IOException ioex) {
-                    } catch (ClassNotFoundException cnfex) {}
+                    } catch (ClassNotFoundException cnfex) {
+                    }
                 }
             }
         }
     }
 
-    
     /*
-    public void addProvidersChangeListener(PropertyChangeListener l) {
-        propSupport.addPropertyChangeListener(PROP_PROVIDER, l);
-    }
-    
-    public void removeProvidersChangeListener(PropertyChangeListener l) {
-        propSupport.removePropertyChangeListener(PROP_PROVIDER, l);
-    }
-    
-    public void addVisualizersChangeListener(PropertyChangeListener l) {
-        propSupport.addPropertyChangeListener(PROP_VISUALIZER, l);
-    }
-    
-    public void removeVisualizersChangeListener(PropertyChangeListener l) {
-        propSupport.removePropertyChangeListener(PROP_VISUALIZER, l);
-    }
+     * public void addProvidersChangeListener(PropertyChangeListener l) {
+     * propSupport.addPropertyChangeListener(PROP_PROVIDER, l); }
+     *
+     * public void removeProvidersChangeListener(PropertyChangeListener l) {
+     * propSupport.removePropertyChangeListener(PROP_PROVIDER, l); }
+     *
+     * public void addVisualizersChangeListener(PropertyChangeListener l) {
+     * propSupport.addPropertyChangeListener(PROP_VISUALIZER, l); }
+     *
+     * public void removeVisualizersChangeListener(PropertyChangeListener l) {
+     * propSupport.removePropertyChangeListener(PROP_VISUALIZER, l); }
      */
 
     /* Start lazy diff computation */
+    @Override
     public void addNotify() {
         super.addNotify();
         added = true;
@@ -359,6 +430,7 @@ public class DiffPresenter extends javax.swing.JPanel {
     }
 
     /* On close kill background task. */
+    @Override
     public void removeNotify() {
         super.removeNotify();
         computationTask.cancel();
@@ -366,6 +438,9 @@ public class DiffPresenter extends javax.swing.JPanel {
 
     /**
      * Asynchronously computes and shows diff.
+     *
+     * @param  p  DOCUMENT ME!
+     * @param  v  DOCUMENT ME!
      */
     private synchronized void asyncDiff(final DiffProvider p, final DiffVisualizer v) {
         if (v == null) {
@@ -376,10 +451,10 @@ public class DiffPresenter extends javax.swing.JPanel {
         if (p != null) {
             diffs = diffInfo.getInitialDifferences();
             if (diffs == null) {
-                JPanel panel = new JPanel();
+                final JPanel panel = new JPanel();
                 panel.setLayout(new BorderLayout());
-                String message = NbBundle.getMessage(DiffPresenter.class, "BK0001");
-                JLabel label = new JLabel(message);
+                final String message = NbBundle.getMessage(DiffPresenter.class, "BK0001");
+                final JLabel label = new JLabel(message);
                 label.setHorizontalAlignment(JLabel.CENTER);
                 panel.add(label, BorderLayout.CENTER);
                 setVisualizer(panel);
@@ -389,62 +464,78 @@ public class DiffPresenter extends javax.swing.JPanel {
         }
 
         final Difference[] fdiffs = diffs;
-        Runnable computation = new Runnable() {
-            public void run() {
-                try {
-                    Difference[] adiffs = fdiffs;
-                    String message = NbBundle.getMessage(DiffPresenter.class, "BK0001");
-                    ProgressHandle ph = ProgressHandleFactory.createHandle(message);
-                    if (adiffs == null) {
-                        try {
-                            ph.start();
-                            adiffs = p.computeDiff(
-                                    diffInfo.createFirstReader(),
-                                    diffInfo.createSecondReader()
-                            );
-                        } finally {
-                            ph.finish();
-                        }
-                    }
+        final Runnable computation = new Runnable() {
 
-                    if (adiffs == null) {
-                        return;
-                    }
-
-                    final Difference[] fadiffs = adiffs;
-                    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
+                @Override
+                public void run() {
+                    try {
+                        Difference[] adiffs = fdiffs;
+                        final String message = NbBundle.getMessage(DiffPresenter.class, "BK0001");
+                        final ProgressHandle ph = ProgressHandleFactory.createHandle(message);
+                        if (adiffs == null) {
                             try {
-                                viewVisualizer(v, fadiffs);
-                            } catch (IOException ioex) {
-                                ErrorManager.getDefault().notify(ErrorManager.USER, ioex);
+                                ph.start();
+                                adiffs = p.computeDiff(
+                                        diffInfo.createFirstReader(),
+                                        diffInfo.createSecondReader());
+                            } finally {
+                                ph.finish();
                             }
                         }
-                    });
 
-                } catch (InterruptedIOException ex) {
-                    ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
-                } catch (IOException ex) {
-                    ErrorManager.getDefault().notify(ErrorManager.USER, ex);
+                        if (adiffs == null) {
+                            return;
+                        }
+
+                        final Difference[] fadiffs = adiffs;
+                        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        viewVisualizer(v, fadiffs);
+                                    } catch (IOException ioex) {
+                                        ErrorManager.getDefault().notify(ErrorManager.USER, ioex);
+                                    }
+                                }
+                            });
+                    } catch (InterruptedIOException ex) {
+                        ErrorManager.getDefault().notify(ErrorManager.INFORMATIONAL, ex);
+                    } catch (IOException ex) {
+                        ErrorManager.getDefault().notify(ErrorManager.USER, ex);
+                    }
                 }
-            }
-        };
+            };
 
         computationTask.cancel();
         computationTask = diffRP.post(computation);
     }
-    
-    private void viewVisualizer(DiffVisualizer v, Difference[] diffs) throws IOException {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   v      DOCUMENT ME!
+     * @param   diffs  DOCUMENT ME!
+     *
+     * @throws  IOException  DOCUMENT ME!
+     */
+    private void viewVisualizer(final DiffVisualizer v, final Difference[] diffs) throws IOException {
         assert SwingUtilities.isEventDispatchThread();
-        Component c = v.createView(diffs, diffInfo.getName1(), diffInfo.getTitle1(),
-            diffInfo.createFirstReader(), diffInfo.getName2(), diffInfo.getTitle2(),
-            diffInfo.createSecondReader(), diffInfo.getMimeType());
+        final Component c = v.createView(
+                diffs,
+                diffInfo.getName1(),
+                diffInfo.getTitle1(),
+                diffInfo.createFirstReader(),
+                diffInfo.getName2(),
+                diffInfo.getTitle2(),
+                diffInfo.createSecondReader(),
+                diffInfo.getMimeType());
         setVisualizer((JComponent)c);
-        TopComponent tp = diffInfo.getPresentingComponent();
+        final TopComponent tp = diffInfo.getPresentingComponent();
         if (tp != null) {
             tp.setName(c.getName());
             if (c instanceof TopComponent) {
-                TopComponent vtp = (TopComponent) c;
+                final TopComponent vtp = (TopComponent)c;
                 tp.setToolTipText(vtp.getToolTipText());
                 tp.setIcon(vtp.getIcon());
             }
@@ -452,11 +543,16 @@ public class DiffPresenter extends javax.swing.JPanel {
         c.requestFocus();
     }
 
-    private void setVisualizer(JComponent visualizer) {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  visualizer  DOCUMENT ME!
+     */
+    private void setVisualizer(final JComponent visualizer) {
         visualizerPanel.removeAll();
         if (visualizer != null) {
             toolbarPanel.removeAll();
-            JComponent toolbar = (JComponent) visualizer.getClientProperty(PROP_TOOLBAR);
+            final JComponent toolbar = (JComponent)visualizer.getClientProperty(PROP_TOOLBAR);
             if (toolbar != null) {
                 toolbarPanel.add(toolbar);
             }
@@ -465,12 +561,18 @@ public class DiffPresenter extends javax.swing.JPanel {
         revalidate();
         repaint();
     }
-    
+
+    //~ Inner Classes ----------------------------------------------------------
+
     /**
      * This class contains informations about the differences.
+     *
+     * @version  $Revision$, $Date$
      */
-    public static abstract class Info extends Object {
-        
+    public abstract static class Info extends Object {
+
+        //~ Instance fields ----------------------------------------------------
+
         private String name1;
         private String name2;
         private String title1;
@@ -479,9 +581,27 @@ public class DiffPresenter extends javax.swing.JPanel {
         private boolean chooseProviders;
         private boolean chooseVisualizers;
         private TopComponent tp;
-        
-        public Info(String name1, String name2, String title1, String title2,
-                    String mimeType, boolean chooseProviders, boolean chooseVisualizers) {
+
+        //~ Constructors -------------------------------------------------------
+
+        /**
+         * Creates a new Info object.
+         *
+         * @param  name1              DOCUMENT ME!
+         * @param  name2              DOCUMENT ME!
+         * @param  title1             DOCUMENT ME!
+         * @param  title2             DOCUMENT ME!
+         * @param  mimeType           DOCUMENT ME!
+         * @param  chooseProviders    DOCUMENT ME!
+         * @param  chooseVisualizers  DOCUMENT ME!
+         */
+        public Info(final String name1,
+                final String name2,
+                final String title1,
+                final String title2,
+                final String mimeType,
+                final boolean chooseProviders,
+                final boolean chooseVisualizers) {
             this.name1 = name1;
             this.name2 = name2;
             this.title1 = title1;
@@ -490,55 +610,124 @@ public class DiffPresenter extends javax.swing.JPanel {
             this.chooseProviders = chooseProviders;
             this.chooseVisualizers = chooseVisualizers;
         }
-        
+
+        //~ Methods ------------------------------------------------------------
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public String getName1() {
             return name1;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public String getName2() {
             return name2;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public String getTitle1() {
             return title1;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public String getTitle2() {
             return title2;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public String getMimeType() {
             return mimeType;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public boolean isChooseProviders() {
             return chooseProviders;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public boolean isChooseVisualizers() {
             return chooseVisualizers;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public Difference[] getDifferences() {
             return null;
         }
 
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public Difference[] getInitialDifferences() {
             return null;
         }
 
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         *
+         * @throws  FileNotFoundException  DOCUMENT ME!
+         */
         public abstract Reader createFirstReader() throws FileNotFoundException;
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         *
+         * @throws  FileNotFoundException  DOCUMENT ME!
+         */
         public abstract Reader createSecondReader() throws FileNotFoundException;
-        
-        public void setPresentingComponent(TopComponent tp) {
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param  tp  DOCUMENT ME!
+         */
+        public void setPresentingComponent(final TopComponent tp) {
             this.tp = tp;
         }
-        
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
         public TopComponent getPresentingComponent() {
             return tp;
         }
-        
     }
-    
 }

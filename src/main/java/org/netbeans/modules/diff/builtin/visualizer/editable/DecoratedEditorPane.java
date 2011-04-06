@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,39 +50,55 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
+import org.netbeans.api.diff.Difference;
+import org.netbeans.api.editor.fold.FoldHierarchy;
+import org.netbeans.editor.BaseTextUI;
 import org.netbeans.editor.EditorUI;
 import org.netbeans.editor.Utilities;
-import org.netbeans.editor.BaseTextUI;
-import org.netbeans.api.editor.fold.FoldHierarchy;
-import org.netbeans.api.diff.Difference;
-import org.openide.ErrorManager;
-import org.openide.util.RequestProcessor;
-
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 import org.netbeans.modules.diff.Utils;
 import org.netbeans.modules.editor.java.JavaKit;
 
+import org.openide.ErrorManager;
+import org.openide.util.RequestProcessor;
+
+import java.awt.*;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.*;
+import javax.swing.text.*;
+
 /**
  * Editor pane with added decorations (diff lines).
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 class DecoratedEditorPane extends JEditorPane implements PropertyChangeListener {
 
-    private Difference[]        currentDiff;
-    private DiffContentPanel    master;
-    
+    //~ Static fields/initializers ---------------------------------------------
+
+    private static final RequestProcessor FONT_RP = new RequestProcessor("DiffFontLoadingRP", 1); // NOI18N
+
+    //~ Instance fields --------------------------------------------------------
+
+    private Difference[] currentDiff;
+    private DiffContentPanel master;
+
     private final RequestProcessor.Task repaintTask;
-    private static final RequestProcessor FONT_RP = new RequestProcessor("DiffFontLoadingRP", 1); //NOI18N
 
-    private int                 fontHeight = -1;
-    private int                 charWidth;
+    private int fontHeight = -1;
+    private int charWidth;
 
-    public DecoratedEditorPane(DiffContentPanel master) {
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new DecoratedEditorPane object.
+     *
+     * @param  master  DOCUMENT ME!
+     */
+    public DecoratedEditorPane(final DiffContentPanel master) {
 //                 BaseTextUI btu = new BaseTextUI();
 //        btu.installUI(this);
 //        super.setUI(btu);
@@ -83,141 +106,160 @@ class DecoratedEditorPane extends JEditorPane implements PropertyChangeListener 
         setBorder(null);
         this.master = master;
         master.getMaster().addPropertyChangeListener(this);
-        EditorKit kit = new JavaKit();//CloneableEditorSupport.getEditorKit("text/x-java");
+        final EditorKit kit = new JavaKit(); // CloneableEditorSupport.getEditorKit("text/x-java");
         setEditorKit(kit);
         setContentType("text/x-java");
 //        setEditorKit(CloneableEditorSupport.getEditorKit("text/plain"));
-
-
     }
 
-//    @Override
-//    public void setUI(ComponentUI cui){
-//        System.out.println("setComponentUI");
-//        new Exception().printStackTrace();
-//                BaseTextUI btu=new BaseTextUI();
-//        btu.installUI(this);
-//        super.setUI(btu);
-//        invalidate();
-//    }
-//    @Override
-//    public void setUI(TextUI cui){
-//        System.out.println("settextUI");
-//                BaseTextUI btu = new BaseTextUI();
-//        btu.installUI(this);
-//        new Exception().printStackTrace();
-//        super.setUI(btu);
-//        invalidate();
-//    }
+    //~ Methods ----------------------------------------------------------------
 
-
+    /**
+     * DOCUMENT ME!
+     *
+     * @return    DOCUMENT ME!
+     *
+     * @Override  public void setUI(ComponentUI cui){ System.out.println("setComponentUI"); new
+     *            Exception().printStackTrace(); BaseTextUI btu=new BaseTextUI(); btu.installUI(this); super.setUI(btu);
+     *            invalidate(); } @Override public void setUI(TextUI cui){ System.out.println("settextUI"); BaseTextUI
+     *            btu = new BaseTextUI(); btu.installUI(this); new Exception().printStackTrace(); super.setUI(btu);
+     *            invalidate(); }
+     */
     public boolean isFirst() {
         return master.isFirst();
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public DiffContentPanel getMaster() {
         return master;
     }
 
-    void setDifferences(Difference [] diff) {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  diff  DOCUMENT ME!
+     */
+    void setDifferences(final Difference[] diff) {
         currentDiff = diff;
         repaint();
     }
 
     @Override
-    public void setFont(Font font) {
+    public void setFont(final Font font) {
         super.setFont(font);
         setFontHeightWidth(getFont());
     }
-    
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  font  DOCUMENT ME!
+     */
     private void setFontHeightWidth(final Font font) {
         FONT_RP.post(new Runnable() {
-            @Override
-            public void run() {
-                FontMetrics metrics = getFontMetrics(font);
-                charWidth = metrics.charWidth('m');
-                fontHeight = metrics.getHeight();
-            }
-        });
+
+                @Override
+                public void run() {
+                    final FontMetrics metrics = getFontMetrics(font);
+                    charWidth = metrics.charWidth('m');
+                    fontHeight = metrics.getHeight();
+                }
+            });
     }
-    
+
     @Override
-    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    public int getScrollableUnitIncrement(final Rectangle visibleRect, final int orientation, final int direction) {
         if (fontHeight == -1) {
             return super.getScrollableUnitIncrement(visibleRect, orientation, direction);
         }
         switch (orientation) {
-        case SwingConstants.VERTICAL:
-            return fontHeight;
-        case SwingConstants.HORIZONTAL:
-            return charWidth;
-        default:
-            throw new IllegalArgumentException("Invalid orientation: " + orientation); // discrimination
+            case SwingConstants.VERTICAL: {
+                return fontHeight;
+            }
+            case SwingConstants.HORIZONTAL: {
+                return charWidth;
+            }
+            default: {
+                throw new IllegalArgumentException("Invalid orientation: " + orientation); // discrimination
+            }
         }
     }
 
     @Override
-    protected void paintComponent(Graphics gr) {
+    protected void paintComponent(final Graphics gr) {
         super.paintComponent(gr);
-        if (currentDiff == null) return;
+        if (currentDiff == null) {
+            return;
+        }
 
-        EditorUI editorUI = org.netbeans.editor.Utilities.getEditorUI(this);
-        
-        Graphics2D g = (Graphics2D) gr.create();
-        Rectangle clip = g.getClipBounds();
-        Stroke cs = g.getStroke();
-        // compensate for cursor drawing, it is needed for catching a difference on the cursor line 
+        final EditorUI editorUI = org.netbeans.editor.Utilities.getEditorUI(this);
+
+        final Graphics2D g = (Graphics2D)gr.create();
+        final Rectangle clip = g.getClipBounds();
+        final Stroke cs = g.getStroke();
+        // compensate for cursor drawing, it is needed for catching a difference on the cursor line
         clip.y -= 1;
-        clip.height += 1; 
-        
-        
-        FoldHierarchy foldHierarchy = FoldHierarchy.get(editorUI.getComponent());
-        JTextComponent component = editorUI.getComponent();
-        if (component == null) return;
-        View rootView = Utilities.getDocumentView(component);
-        if (rootView == null) return;
-        BaseTextUI textUI = (BaseTextUI)component.getUI();
+        clip.height += 1;
 
-        AbstractDocument doc = (AbstractDocument)component.getDocument();
+        final FoldHierarchy foldHierarchy = FoldHierarchy.get(editorUI.getComponent());
+        final JTextComponent component = editorUI.getComponent();
+        if (component == null) {
+            return;
+        }
+        final View rootView = Utilities.getDocumentView(component);
+        if (rootView == null) {
+            return;
+        }
+        final BaseTextUI textUI = (BaseTextUI)component.getUI();
+
+        final AbstractDocument doc = (AbstractDocument)component.getDocument();
         doc.readLock();
-        try{
+        try {
             foldHierarchy.lock();
-            try{
-                int startPos = textUI.getPosFromY(clip.y);
-                int startViewIndex = rootView.getViewIndex(startPos,Position.Bias.Forward);
-                int rootViewCount = rootView.getViewCount();
+            try {
+                final int startPos = textUI.getPosFromY(clip.y);
+                final int startViewIndex = rootView.getViewIndex(startPos, Position.Bias.Forward);
+                final int rootViewCount = rootView.getViewCount();
 
-                if (startViewIndex >= 0 && startViewIndex < rootViewCount) {
+                if ((startViewIndex >= 0) && (startViewIndex < rootViewCount)) {
                     // find the nearest visible line with an annotation
-                    Rectangle rec = textUI.modelToView(component, rootView.getView(startViewIndex).getStartOffset());
+                    final Rectangle rec = textUI.modelToView(
+                            component,
+                            rootView.getView(startViewIndex).getStartOffset());
                     int y = (rec == null) ? 0 : rec.y;
 
-                    int clipEndY = clip.y + clip.height;
-                    Element rootElem = textUI.getRootView(component).getElement();
+                    final int clipEndY = clip.y + clip.height;
+                    final Element rootElem = textUI.getRootView(component).getElement();
 
                     View view = rootView.getView(startViewIndex);
                     int line = rootElem.getElementIndex(view.getStartOffset());
                     line++; // make it 1-based
 
-                    int curDif = master.getMaster().getCurrentDifference();
-                    
+                    final int curDif = master.getMaster().getCurrentDifference();
+
                     g.setColor(master.getMaster().getColorLines());
                     for (int i = startViewIndex; i < rootViewCount; i++) {
                         view = rootView.getView(i);
                         line = rootElem.getElementIndex(view.getStartOffset());
                         line++; // make it 1-based
-                        Difference ad = master.isFirst() ? EditableDiffView.getFirstDifference(currentDiff, line) : EditableDiffView.getSecondDifference(currentDiff, line);
-                        Rectangle rec1 = component.modelToView(view.getStartOffset());
-                        Rectangle rec2 = component.modelToView(view.getEndOffset() - 1);
-                        if (rec1 == null || rec2 == null) {
+                        Difference ad = master.isFirst() ? EditableDiffView.getFirstDifference(currentDiff, line)
+                                                         : EditableDiffView.getSecondDifference(currentDiff, line);
+                        final Rectangle rec1 = component.modelToView(view.getStartOffset());
+                        final Rectangle rec2 = component.modelToView(view.getEndOffset() - 1);
+                        if ((rec1 == null) || (rec2 == null)) {
                             break;
                         }
                         y = (int)rec1.getY();
-                        int height = (int) (rec2.getY() + rec2.getHeight() - rec1.getY());
+                        final int height = (int)(rec2.getY() + rec2.getHeight() - rec1.getY());
                         if (ad != null) {
                             // TODO: can cause AIOOBE, synchronize "currentDiff" and "curDif" variables
-                            g.setStroke(curDif >= 0 && curDif < currentDiff.length && currentDiff[curDif] == ad ? master.getMaster().getBoldStroke() : cs);
-                            int yy = y + height;
+                            g.setStroke(((curDif >= 0) && (curDif < currentDiff.length) && (currentDiff[curDif] == ad))
+                                    ? master.getMaster().getBoldStroke() : cs);
+                            final int yy = y + height;
                             if (ad.getType() == (master.isFirst() ? Difference.ADD : Difference.DELETE)) {
                                 g.drawLine(0, yy, getWidth(), yy);
                                 ad = null;
@@ -239,7 +281,7 @@ class DecoratedEditorPane extends JEditorPane implements PropertyChangeListener 
             } finally {
                 foldHierarchy.unlock();
             }
-        } catch (BadLocationException ble){
+        } catch (BadLocationException ble) {
             ErrorManager.getDefault().notify(ble);
         } finally {
             doc.readUnlock();
@@ -247,19 +289,30 @@ class DecoratedEditorPane extends JEditorPane implements PropertyChangeListener 
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         repaintTask.schedule(150);
     }
-    
+
+    //~ Inner Classes ----------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @version  $Revision$, $Date$
+     */
     private class RepaintPaneTask implements Runnable {
+
+        //~ Methods ------------------------------------------------------------
+
         @Override
         public void run() {
             SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    repaint();
-                }
-            });
+
+                    @Override
+                    public void run() {
+                        repaint();
+                    }
+                });
         }
     }
 }

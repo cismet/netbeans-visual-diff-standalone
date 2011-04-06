@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -49,23 +56,46 @@ import java.awt.Rectangle;
 
 /**
  * Defines a hotspot inside a component.
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 class HotSpot {
 
-    private Rectangle   rect;
-    private Difference  diff;
+    //~ Instance fields --------------------------------------------------------
 
-    public HotSpot(Rectangle rect, Difference diff) {
+    private Rectangle rect;
+    private Difference diff;
+
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new HotSpot object.
+     *
+     * @param  rect  DOCUMENT ME!
+     * @param  diff  DOCUMENT ME!
+     */
+    public HotSpot(final Rectangle rect, final Difference diff) {
         this.rect = rect;
         this.diff = diff;
     }
 
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public Rectangle getRect() {
         return rect;
     }
 
+    /**
+     * DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
     public Difference getDiff() {
         return diff;
     }

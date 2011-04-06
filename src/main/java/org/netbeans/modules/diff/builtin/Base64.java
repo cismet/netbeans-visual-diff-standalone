@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -44,60 +51,108 @@
 package org.netbeans.modules.diff.builtin;
 
 import java.io.ByteArrayOutputStream;
+
 import java.util.*;
 
 /**
  * Base64 utility methods.
  *
- * @author Maros Sandor
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 class Base64 {
-    
+
+    //~ Constructors -----------------------------------------------------------
+
+    /**
+     * Creates a new Base64 object.
+     */
     private Base64() {
     }
-    
-    public static byte [] decode(List<String> ls) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        for (String s : ls) {
+
+    //~ Methods ----------------------------------------------------------------
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   ls  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
+    public static byte[] decode(final List<String> ls) {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        for (final String s : ls) {
             decode(s, bos);
         }
         return bos.toByteArray();
     }
-  
-    private static void decode(String s, ByteArrayOutputStream bos) {
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param  s    DOCUMENT ME!
+     * @param  bos  DOCUMENT ME!
+     */
+    private static void decode(final String s, final ByteArrayOutputStream bos) {
         int i = 0;
-        int len = s.length();
+        final int len = s.length();
         while (true) {
-            while (i < len && s.charAt(i) <= ' ') i++;
-            if (i == len) break;
-            int tri = (decode(s.charAt(i)) << 18)
-            + (decode(s.charAt(i+1)) << 12)
-            + (decode(s.charAt(i+2)) << 6)
-            + (decode(s.charAt(i+3)));
-          
+            while ((i < len) && (s.charAt(i) <= ' ')) {
+                i++;
+            }
+            if (i == len) {
+                break;
+            }
+            final int tri = (decode(s.charAt(i)) << 18)
+                        + (decode(s.charAt(i + 1)) << 12)
+                        + (decode(s.charAt(i + 2)) << 6)
+                        + (decode(s.charAt(i + 3)));
+
             bos.write((tri >> 16) & 255);
-            if (s.charAt(i+2) == '=') break;
+            if (s.charAt(i + 2) == '=') {
+                break;
+            }
             bos.write((tri >> 8) & 255);
-            if (s.charAt(i+3) == '=') break;
+            if (s.charAt(i + 3) == '=') {
+                break;
+            }
             bos.write(tri & 255);
-          
+
             i += 4;
         }
     }
 
-    private static int decode(char c) {
-        if (c >= 'A' && c <= 'Z') return ((int) c) - 65;
-        else if (c >= 'a' && c <= 'z') return ((int) c) - 97 + 26;
-        else if (c >= '0' && c <= '9') return ((int) c) - 48 + 26 + 26;
-        else {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param   c  DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     *
+     * @throws  RuntimeException  DOCUMENT ME!
+     */
+    private static int decode(final char c) {
+        if ((c >= 'A') && (c <= 'Z')) {
+            return ((int)c) - 65;
+        } else if ((c >= 'a') && (c <= 'z')) {
+            return ((int)c) - 97 + 26;
+        } else if ((c >= '0') && (c <= '9')) {
+            return ((int)c) - 48 + 26 + 26;
+        } else {
             switch (c) {
-                case '+': return 62;
-                case '/': return 63;
-                case '=': return 0;
-                default:
+                case '+': {
+                    return 62;
+                }
+                case '/': {
+                    return 63;
+                }
+                case '=': {
+                    return 0;
+                }
+                default: {
                     throw new RuntimeException("unexpected code: " + c);
+                }
             }
         }
     }
-    
 }

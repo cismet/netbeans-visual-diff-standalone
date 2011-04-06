@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -41,52 +48,53 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.diff.builtin;
-
-import java.beans.*;
 
 import org.openide.util.ImageUtilities;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
+
+import java.beans.*;
 
 /**
  * BeanInfo for built in diff provider.
  *
- * @author Martin Entlicher
+ * @author   Martin Entlicher
+ * @version  $Revision$, $Date$
  */
 public class DefaultDiffBeanInfo extends SimpleBeanInfo {
+
+    //~ Methods ----------------------------------------------------------------
 
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *
-     * @return BeanDescriptor describing the editable
-     * properties of this bean.  May return null if the
-     * information should be obtained by automatic analysis.
+     * @return  BeanDescriptor describing the editable properties of this bean. May return null if the information
+     *          should be obtained by automatic analysis.
      */
+    @Override
     public BeanDescriptor getBeanDescriptor() {
         return new BeanDescriptor(DefaultDiff.class);
     }
-    
-    
+
     /**
      * Gets the bean's <code>PropertyDescriptor</code>s.
      *
-     * @return An array of PropertyDescriptors describing the editable
-     * properties supported by this bean.  May return null if the
-     * information should be obtained by automatic analysis.
-     * <p>
-     * If a property is indexed, then its entry in the result array will
-     * belong to the IndexedPropertyDescriptor subclass of PropertyDescriptor.
-     * A client of getPropertyDescriptors can use "instanceof" to check
-     * if a given PropertyDescriptor is an IndexedPropertyDescriptor.
+     * @return  An array of PropertyDescriptors describing the editable properties supported by this bean. May return
+     *          null if the information should be obtained by automatic analysis.
+     *
+     *          <p>If a property is indexed, then its entry in the result array will belong to the
+     *          IndexedPropertyDescriptor subclass of PropertyDescriptor. A client of getPropertyDescriptors can use
+     *          "instanceof" to check if a given PropertyDescriptor is an IndexedPropertyDescriptor.</p>
      */
+    @Override
     public PropertyDescriptor[] getPropertyDescriptors() {
         PropertyDescriptor[] desc;
         try {
-            PropertyDescriptor showDiffSelector = new PropertyDescriptor("showDiffSelector", DefaultDiff.class);
-            showDiffSelector.setDisplayName      (NbBundle.getMessage(DefaultDiffBeanInfo.class, "PROP_showDiffSelector"));
-            showDiffSelector.setShortDescription (NbBundle.getMessage(DefaultDiffBeanInfo.class, "HINT_showDiffSelector"));
+            final PropertyDescriptor showDiffSelector = new PropertyDescriptor("showDiffSelector", DefaultDiff.class);
+            showDiffSelector.setDisplayName(NbBundle.getMessage(DefaultDiffBeanInfo.class, "PROP_showDiffSelector"));
+            showDiffSelector.setShortDescription(NbBundle.getMessage(
+                    DefaultDiffBeanInfo.class,
+                    "HINT_showDiffSelector"));
             desc = new PropertyDescriptor[] { showDiffSelector };
         } catch (IntrospectionException ex) {
             org.openide.ErrorManager.getDefault().notify(ex);
@@ -94,46 +102,44 @@ public class DefaultDiffBeanInfo extends SimpleBeanInfo {
         }
         return desc;
     }
-    
+
     /**
-     * A bean may have a "default" property that is the property that will
-     * mostly commonly be initially chosen for update by human's who are
-     * customizing the bean.
-     * @return  Index of default property in the PropertyDescriptor array
-     * 		returned by getPropertyDescriptors.
-     * <P>	Returns -1 if there is no default property.
+     * A bean may have a "default" property that is the property that will mostly commonly be initially chosen for
+     * update by human's who are customizing the bean.
+     *
+     * @return  Index of default property in the PropertyDescriptor array returned by getPropertyDescriptors.
+     *
+     *          <P>Returns -1 if there is no default property.</P>
      */
+    @Override
     public int getDefaultPropertyIndex() {
         return 0;
     }
-    
+
     /**
-     * This method returns an image object that can be used to
-     * represent the bean in toolboxes, toolbars, etc.   Icon images
-     * will typically be GIFs, but may in future include other formats.
-     * <p>
-     * Beans aren't required to provide icons and may return null from
-     * this method.
-     * <p>
-     * There are four possible flavors of icons (16x16 color,
-     * 32x32 color, 16x16 mono, 32x32 mono).  If a bean choses to only
-     * support a single icon we recommend supporting 16x16 color.
-     * <p>
-     * We recommend that icons have a "transparent" background
-     * so they can be rendered onto an existing background.
+     * This method returns an image object that can be used to represent the bean in toolboxes, toolbars, etc. Icon
+     * images will typically be GIFs, but may in future include other formats.
      *
-     * @param  iconKind  The kind of icon requested.  This should be
-     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32,
-     *    ICON_MONO_16x16, or ICON_MONO_32x32.
-     * @return  An image object representing the requested icon.  May
-     *    return null if no suitable icon is available.
+     * <p>Beans aren't required to provide icons and may return null from this method.</p>
+     *
+     * <p>There are four possible flavors of icons (16x16 color, 32x32 color, 16x16 mono, 32x32 mono). If a bean choses
+     * to only support a single icon we recommend supporting 16x16 color.</p>
+     *
+     * <p>We recommend that icons have a "transparent" background so they can be rendered onto an existing background.
+     * </p>
+     *
+     * @param   iconKind  The kind of icon requested. This should be one of the constant values ICON_COLOR_16x16,
+     *                    ICON_COLOR_32x32, ICON_MONO_16x16, or ICON_MONO_32x32.
+     *
+     * @return  An image object representing the requested icon. May return null if no suitable icon is available.
      */
-    public java.awt.Image getIcon(int iconKind) {
+    @Override
+    public java.awt.Image getIcon(final int iconKind) {
         switch (iconKind) {
-            case ICON_COLOR_16x16:
+            case ICON_COLOR_16x16: {
                 return ImageUtilities.loadImage("org/netbeans/modules/diff/diffSettingsIcon.gif", true); // NOI18N
+            }
         }
         return null;
     }
-    
 }

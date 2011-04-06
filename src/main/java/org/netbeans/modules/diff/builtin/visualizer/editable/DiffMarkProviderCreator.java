@@ -1,3 +1,10 @@
+/***************************************************
+*
+* cismet GmbH, Saarbruecken, Germany
+*
+*              ... and it just works.
+*
+****************************************************/
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
@@ -43,21 +50,27 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
-import org.netbeans.modules.editor.errorstripe.privatespi.MarkProviderCreator;
 import org.netbeans.modules.editor.errorstripe.privatespi.MarkProvider;
+import org.netbeans.modules.editor.errorstripe.privatespi.MarkProviderCreator;
 
 import javax.swing.text.JTextComponent;
 
 /**
  * Errorstripe mark provider for Diff pane.
- * 
- * @author Maros Sandor
+ *
+ * @author   Maros Sandor
+ * @version  $Revision$, $Date$
  */
 public class DiffMarkProviderCreator implements MarkProviderCreator {
-    
+
+    //~ Static fields/initializers ---------------------------------------------
+
     static final String MARK_PROVIDER_KEY = "org.netbeans.modules.diff.builtin.visualizer.editable.MarkProvider";
 
-    public MarkProvider createMarkProvider(JTextComponent component) {
-        return (MarkProvider) component.getClientProperty(MARK_PROVIDER_KEY);
+    //~ Methods ----------------------------------------------------------------
+
+    @Override
+    public MarkProvider createMarkProvider(final JTextComponent component) {
+        return (MarkProvider)component.getClientProperty(MARK_PROVIDER_KEY);
     }
 }
