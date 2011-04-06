@@ -74,6 +74,7 @@ import org.netbeans.api.editor.fold.FoldHierarchyEvent;
 import org.netbeans.modules.diff.DiffModuleConfig;
 import org.netbeans.modules.editor.errorstripe.privatespi.MarkProvider;
 import org.netbeans.modules.editor.errorstripe.privatespi.Mark;
+import org.openide.util.Exceptions;
 import org.openide.util.RequestProcessor;
 import org.openide.util.NbBundle;
 import org.openide.ErrorManager;
@@ -1454,6 +1455,13 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
                 diffs = diff.computeDiff(first, second);
             } catch (IOException e) {
                 diffs = NO_DIFFERENCES;
+            } finally {
+                try {
+                    first.close();
+                    second.close();
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
             return diffs;
         }
