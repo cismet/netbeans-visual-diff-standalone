@@ -1,9 +1,4 @@
-/*
- * NewJFrame.java
- *
- * Created on 26.11.2010, 14:07:08
- */
-package de.cismet.diff.guidiff;
+package de.cismet.custom.visualdiff;
 
 import java.awt.BorderLayout;
 import java.io.File;
@@ -17,55 +12,55 @@ import org.netbeans.api.diff.Difference;
 import org.netbeans.api.diff.StreamSource;
 
 /**
+ * This is a test which demonstrates the use of the VisualDiff component.
+ *
+ * In order to run this test application, make sure that the directory <code>\META-INF\services</code>
+ * in the target directory or built jar file contains
+ * <ul>
+ *      <li><code>org.netbeans.api.diff.Diff</code> containing
+ *      <code>org.netbeans.modules.diff.builtin.DefaultDiff</code></li>
+ *      <li><code>org.netbeans.spi.diff.DiffControllerProvider</code> containing
+ *      <code>org.netbeans.modules.diff.builtin.DefaultDiffControllerProvider</code></li>
+ *      <li><code>org.netbeans.spi.diff.DiffVisualizer</code> containing
+ *      <code>  org.netbeans.modules.diff.builtin.visualizer.TextDiffVisualizer
+ *              org.netbeans.modules.diff.builtin.visualizer.editable.EditableDiffVisualizer</code></li>
+ * </ul>
  *
  * @author thorsten
  */
-public class NewJFrame extends javax.swing.JFrame {
-    //private static final String MIMETYPE = "text/x-java";
-    private static final String MIMETYPE = "text/plain";
+public class Testapplication extends javax.swing.JFrame {
     //private static final String MIMETYPE = "text/html";
-    //private static final String MIMETYPE = "text/javascript";
-DiffView view;
-int diffNo=-1;
-    /** Creates new form NewJFrame */
-    public NewJFrame() throws Exception {
-       //UIManager.put("EditorPaneUI", new BaseTextUI().getClass().getCanonicalName());
+    //private static final String MIMETYPE = "text/x-java";
+    private static final String MIMETYPE = "text/javascript";
+    //private static final String MIMETYPE = "text/plain";
+
+    private DiffView view;
+
+
+    public Testapplication() throws Exception {
         initComponents();
-       
-        //final File fileA = new File("E:\\Projekte\\guidiff\\filestodiff\\json1.json");
-        //final File fileB = new File("E:\\Projekte\\guidiff\\filestodiff\\json2.json");
-        //final File fileA = new File("E:\\Projekte\\guidiff\\filestodiff\\java1.java");
-        //final File fileB = new File("E:\\Projekte\\guidiff\\filestodiff\\java2.java");
-        final File fileA = new File("E:\\Projekte\\guidiff\\filestodiff\\text1.txt");
-        final File fileB = new File("E:\\Projekte\\guidiff\\filestodiff\\text2.txt");
-        //final File fileA = new File("E:\\Projekte\\guidiff\\filestodiff\\html1.html");
-        //final File fileB = new File("E:\\Projekte\\guidiff\\filestodiff\\html2.html");
 
+        //final String filename1 = "E:\\Projekte\\visualdiff\\filestodiff\\html1.html";
+        //final String filename2 = "E:\\Projekte\\visualdiff\\filestodiff\\html2.html";
+        //final String filename1 = "E:\\Projekte\\visualdiff\\filestodiff\\java1.xjava";
+        //final String filename2 = "E:\\Projekte\\visualdiff\\filestodiff\\java2.xjava";
+        final String filename1 = "E:\\Projekte\\visualdiff\\filestodiff\\json1.json";
+        final String filename2 = "E:\\Projekte\\visualdiff\\filestodiff\\json2.json";
+        //final String filename1 = "E:\\Projekte\\visualdiff\\filestodiff\\text1.txt";
+        //final String filename2 = "E:\\Projekte\\visualdiff\\filestodiff\\text2.txt";
 
-//
-//        Component dv = Diff.getDefault().createDiff("A", "AA", new FileReader(fileA), "B", "BB", new FileReader(fileB), "text/x-java");
-//            DiffPresenter dp=new DiffPresenter(new DiffPresenter.Info("A", "AA", "B", "BB", "text/x-java", false, false) {
-//
-//                public Reader createFirstReader() throws FileNotFoundException {
-//                    return new FileReader(fileA);
-//                }
-//
-//                public Reader createSecondReader() throws FileNotFoundException {
-//                    return new FileReader(fileB);
-//                }
-//            });
-//            getContentPane().add(dv, BorderLayout.CENTER);
+        final File file1 = new File(filename1);
+        final File file2 = new File(filename2);
 
         StreamSource source1 = new StreamSource() {
-
             @Override
             public String getName() {
-                return "name";
+                return filename1;
             }
 
             @Override
             public String getTitle() {
-                return "title";
+                return file1.getName();
             }
 
             @Override
@@ -75,7 +70,7 @@ int diffNo=-1;
 
             @Override
             public Reader createReader() throws IOException {
-                return new FileReader(fileA);
+                return new FileReader(file1);
             }
 
             @Override
@@ -83,16 +78,16 @@ int diffNo=-1;
                 return null;
             }
         };
-        StreamSource source2 = new StreamSource() {
 
+        StreamSource source2 = new StreamSource() {
             @Override
             public String getName() {
-                return "name2";
+                return filename2;
             }
 
             @Override
             public String getTitle() {
-                return "title2";
+                return file2.getName();
             }
 
             @Override
@@ -102,7 +97,7 @@ int diffNo=-1;
 
             @Override
             public Reader createReader() throws IOException {
-                return new FileReader(fileB);
+                return new FileReader(file2);
             }
 
             @Override
@@ -111,17 +106,8 @@ int diffNo=-1;
             }
         };
         
-//        try {
-
-            view = Diff.getDefault().createDiff(source1, source2);
-            //view.setCurrentDifference(3);
-            //view=new EditableDiffView(source1, source2, true);
-            getContentPane().add(view.getComponent(), BorderLayout.CENTER);
-//        } catch (IOException ex) {
-//            Exceptions.printStackTrace(ex);
-//        }
-
-
+        view = Diff.getDefault().createDiff(source1, source2);
+        getContentPane().add(view.getComponent(), BorderLayout.CENTER);
     }
 
     /** This method is called from within the constructor to
@@ -137,8 +123,9 @@ int diffNo=-1;
         btnNextDifference = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle(org.openide.util.NbBundle.getMessage(Testapplication.class, "Testapplication.title")); // NOI18N
 
-        btnPrevDifference.setText(org.openide.util.NbBundle.getMessage(NewJFrame.class, "NewJFrame.btnPrevDifference.text")); // NOI18N
+        btnPrevDifference.setText(org.openide.util.NbBundle.getMessage(Testapplication.class, "Testapplication.btnPrevDifference.text")); // NOI18N
         btnPrevDifference.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPrevDifferenceActionPerformed(evt);
@@ -146,7 +133,7 @@ int diffNo=-1;
         });
         pnlControls.add(btnPrevDifference);
 
-        btnNextDifference.setText(org.openide.util.NbBundle.getMessage(NewJFrame.class, "NewJFrame.btnNextDifference.text")); // NOI18N
+        btnNextDifference.setText(org.openide.util.NbBundle.getMessage(Testapplication.class, "Testapplication.btnNextDifference.text")); // NOI18N
         btnNextDifference.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNextDifferenceActionPerformed(evt);
@@ -160,10 +147,22 @@ int diffNo=-1;
         setBounds((screenSize.width-729)/2, (screenSize.height-706)/2, 729, 706);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * The action handler for the 'next difference' button. Increases the 'current difference'
+     * property of the view.
+     *
+     * @param evt The event to handle.
+     */
     private void btnNextDifferenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextDifferenceActionPerformed
         view.setCurrentDifference((view.getCurrentDifference()+1) % view.getDifferenceCount());
     }//GEN-LAST:event_btnNextDifferenceActionPerformed
 
+    /**
+     * The action handler for the 'previous difference' button. Decreases the 'current difference'
+     * property of the view.
+     *
+     * @param evt The event to handle.
+     */
     private void btnPrevDifferenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevDifferenceActionPerformed
         view.setCurrentDifference((view.getCurrentDifference() == 0 ? view.getDifferenceCount() - 1 : view.getCurrentDifference()-1) % view.getDifferenceCount());
     }//GEN-LAST:event_btnPrevDifferenceActionPerformed
@@ -173,10 +172,10 @@ int diffNo=-1;
      */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
+            @Override
             public void run() {
                 try {
-                    new NewJFrame().setVisible(true);
+                    new Testapplication().setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

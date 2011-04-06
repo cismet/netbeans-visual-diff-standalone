@@ -1,4 +1,4 @@
-package de.cismet.diff.guidiff;
+package de.cismet.custom.visualdiff;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,22 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.diff.Difference;
 import org.netbeans.spi.diff.DiffProvider;
-import org.openide.util.lookup.ServiceProvider;
 
-//@ServiceProvider(service = DiffProvider.class)
 public class MyDiffProvider extends DiffProvider {
     @Override
-    public Difference[] computeDiff(Reader reader, Reader reader1) throws IOException {
-        return HuntDiff.diff(getLines(reader), getLines(reader1), true);
+    public Difference[] computeDiff(Reader reader1, Reader reader2) throws IOException {
+        return HuntDiff.diff(getLines(reader1), getLines(reader2), true);
     }
 
     private String[] getLines(Reader reader) throws IOException {
         List<String> result = new ArrayList<String>();
         BufferedReader bufferedReader = new BufferedReader(reader);
 
-        String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            result.add(line);
+        try {
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                result.add(line);
+            }
+        } finally {
+            bufferedReader.close();
         }
 
         return result.toArray(new String[0]);

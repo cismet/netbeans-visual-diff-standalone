@@ -1,14 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * DiffPanel.java
- *
- * Created on 04.12.2010, 15:51:01
- */
-package de.cismet.diff.guidiff;
+package de.cismet.custom.visualdiff;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -30,11 +20,10 @@ import org.netbeans.api.diff.StreamSource;
 public class DiffPanel extends javax.swing.JPanel {
 
     private final transient org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(this.getClass());
-    DiffView view;
-    String jsonLeft;
-    String jsonRight;
+    private DiffView view;
+    private String jsonLeft;
+    private String jsonRight;
 
-    /** Creates new form DiffPanel */
     public DiffPanel() {
         initComponents();
     }
@@ -43,13 +32,10 @@ public class DiffPanel extends javax.swing.JPanel {
         if (jsonLeft == null || jsonRight == null) {
             log.warn("during update: one json object was null");
         } else {
-
             new SwingWorker<Component, Void>() {
-
                 @Override
                 protected Component doInBackground() throws Exception {
                     StreamSource source1 = new StreamSource() {
-
                         @Override
                         public String getName() {
                             return "name";
@@ -75,8 +61,8 @@ public class DiffPanel extends javax.swing.JPanel {
                             return null;
                         }
                     };
-                    StreamSource source2 = new StreamSource() {
 
+                    StreamSource source2 = new StreamSource() {
                         @Override
                         public String getName() {
                             return "name2";
@@ -117,8 +103,6 @@ public class DiffPanel extends javax.swing.JPanel {
                     }
                 }
             }.execute();
-
-
         }
     }
 
