@@ -43,7 +43,7 @@
  */
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
-import de.cismet.diff.guidiff.MyDiffProvider;
+import de.cismet.custom.visualdiff.MyDiffProvider;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
