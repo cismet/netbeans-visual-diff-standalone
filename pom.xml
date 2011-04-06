@@ -1,4 +1,3 @@
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
@@ -14,7 +13,7 @@
     <packaging>jar</packaging>
     
     <name>NetBeans Visual Diff Standalone</name>
-    <description>!!! DESCRIPTION PENDING !!!</description>
+    <description>This project contains Netbeans' diff component.</description>
 
     <scm>
         <connection>scm:svn:svn+ssh://repositories/svn/repositories/central/de/cismet/custom/netbeans-visual-diff-standalone/trunk</connection>
@@ -370,6 +369,22 @@
                     <artifactId>org-openide-util-lookup</artifactId>
                     <groupId>org.netbeans.api</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>org-netbeans-modules-editor-settings</artifactId>
+                    <groupId>org.netbeans.api</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org-openide-filesystems</artifactId>
+                    <groupId>org.netbeans.api</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org-openide-loaders</artifactId>
+                    <groupId>org.netbeans.api</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>org-openide-nodes</artifactId>
+                    <groupId>org.netbeans.api</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -591,12 +606,6 @@
                     <groupId>org.netbeans.api</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-netbeans-modules-editor-errorstripe-api</artifactId>
-            <version>RELEASE691</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
