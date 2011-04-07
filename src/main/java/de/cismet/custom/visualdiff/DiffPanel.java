@@ -98,7 +98,7 @@ public class DiffPanel extends javax.swing.JPanel {
     /**
      * Starts a new Runnable which shows the waiting screen.
      */
-    protected void showWaiting() {
+    public void showWaiting() {
         final Runnable waitRunnable = new ShowCardRunnable(this, "waiting"); // NOI18N
 
         if (EventQueue.isDispatchThread()) {
@@ -111,7 +111,7 @@ public class DiffPanel extends javax.swing.JPanel {
     /**
      * Starts a new Runnable which shows the diff component.
      */
-    protected void showDiff() {
+    public void showDiff() {
         final Runnable diffRunnable = new ShowCardRunnable(this, "diff"); // NOI18N
 
         if (EventQueue.isDispatchThread()) {
