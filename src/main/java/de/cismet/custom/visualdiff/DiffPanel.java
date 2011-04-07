@@ -13,7 +13,9 @@ import org.netbeans.api.diff.Difference;
 import org.netbeans.api.diff.StreamSource;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.CardLayout;
+import java.awt.Container;
+import java.awt.EventQueue;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,19 +25,27 @@ import java.io.Writer;
 import javax.swing.SwingWorker;
 
 /**
- * DOCUMENT ME!
+ * This panel allows the embedding of Netbeans' diff component.
  *
- * @author   thorsten
  * @version  $Revision$, $Date$
  */
 public class DiffPanel extends javax.swing.JPanel {
 
+    //~ Static fields/initializers ---------------------------------------------
+
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DiffPanel.class);
+
     //~ Instance fields --------------------------------------------------------
 
-    private final transient org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(this.getClass());
     private DiffView view;
-    private String jsonLeft;
-    private String jsonRight;
+    private FileToDiff left;
+    private FileToDiff right;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblWaitingImage;
+    private javax.swing.JPanel pnlDiff;
+    private javax.swing.JPanel pnlWaiting;
+    // End of variables declaration//GEN-END:variables
 
     //~ Constructors -----------------------------------------------------------
 
@@ -44,128 +54,125 @@ public class DiffPanel extends javax.swing.JPanel {
      */
     public DiffPanel() {
         initComponents();
+        // showWaiting();
     }
 
     //~ Methods ----------------------------------------------------------------
 
     /**
-     * DOCUMENT ME!
+     * Starts the retrieval and embedding of a new diff component in a SwingWorker. While the differences of both files
+     * are computed, a "please wait" image is displayed. When the SwingWorker got a new diff component, it's embedded
+     * and displayed.
      */
     public void update() {
-        if ((jsonLeft == null) || (jsonRight == null)) {
-            log.warn("during update: one json object was null");
+        showWaiting();
+        if ((left == null) || (right == null)) {
+            LOG.warn("At least one file is null. The diff component can't be created.");
+            return;
+        }
+
+        new SwingWorker<DiffView, Void>() {
+
+                @Override
+                protected DiffView doInBackground() throws Exception {
+                    final StreamSource sourceLeft = new MyStreamSource(left);
+                    final StreamSource sourceRight = new MyStreamSource(right);
+
+                    return Diff.getDefault().createDiff(sourceLeft, sourceRight);
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        view = get();
+                        pnlDiff.removeAll();
+                        pnlDiff.add(view.getComponent(), BorderLayout.CENTER);
+                        showDiff();
+                    } catch (Exception e) {
+                        LOG.error("Could not update diff component.", e);
+                    }
+                }
+            }.execute();
+    }
+
+    /**
+     * Starts a new Runnable which shows the waiting screen.
+     */
+    protected void showWaiting() {
+        final Runnable waitRunnable = new ShowCardRunnable(this, "waiting"); // NOI18N
+
+        if (EventQueue.isDispatchThread()) {
+            waitRunnable.run();
         } else {
-            new SwingWorker<Component, Void>() {
-
-                    @Override
-                    protected Component doInBackground() throws Exception {
-                        final StreamSource source1 = new StreamSource() {
-
-                                @Override
-                                public String getName() {
-                                    return "name";
-                                }
-
-                                @Override
-                                public String getTitle() {
-                                    return "title";
-                                }
-
-                                @Override
-                                public String getMIMEType() {
-                                    return "text/javascript";
-                                }
-
-                                @Override
-                                public Reader createReader() throws IOException {
-                                    return new StringReader(jsonLeft);
-                                }
-
-                                @Override
-                                public Writer createWriter(final Difference[] conflicts) throws IOException {
-                                    return null;
-                                }
-                            };
-
-                        final StreamSource source2 = new StreamSource() {
-
-                                @Override
-                                public String getName() {
-                                    return "name2";
-                                }
-
-                                @Override
-                                public String getTitle() {
-                                    return "title2";
-                                }
-
-                                @Override
-                                public String getMIMEType() {
-                                    return "text/javascript";
-                                }
-
-                                @Override
-                                public Reader createReader() throws IOException {
-                                    return new StringReader(jsonRight);
-                                }
-
-                                @Override
-                                public Writer createWriter(final Difference[] conflicts) throws IOException {
-                                    return null;
-                                }
-                            };
-
-                        return Diff.getDefault().createDiff(source1, source2).getComponent();
-                    }
-
-                    @Override
-                    protected void done() {
-                        try {
-                            final Component result = get();
-                            removeAll();
-                            add(result, BorderLayout.CENTER);
-                        } catch (Exception e) {
-                            log.error("error during update of diff component", e);
-                        }
-                    }
-                }.execute();
+            EventQueue.invokeLater(waitRunnable);
         }
     }
 
     /**
-     * DOCUMENT ME!
-     *
-     * @return  DOCUMENT ME!
+     * Starts a new Runnable which shows the diff component.
      */
-    public String getJsonLeft() {
-        return jsonLeft;
+    protected void showDiff() {
+        final Runnable diffRunnable = new ShowCardRunnable(this, "diff"); // NOI18N
+
+        if (EventQueue.isDispatchThread()) {
+            diffRunnable.run();
+        } else {
+            EventQueue.invokeLater(diffRunnable);
+        }
     }
 
     /**
-     * DOCUMENT ME!
+     * Sets the information for the left part of the diff component. The DiffPanel will be updated.
      *
-     * @param  jsonLeft  DOCUMENT ME!
+     * @param  content   The content of the file to be shown on the left side.
+     * @param  mimetype  The mimetype of the file to be shown on the left side.
+     * @param  title     The title of the file to be shown on the left side.
      */
-    public void setJsonLeft(final String jsonLeft) {
-        this.jsonLeft = jsonLeft;
+    public void setLeft(final String content, final String mimetype, final String title) {
+        this.left = new FileToDiff(content, mimetype, title);
+        update();
     }
 
     /**
-     * DOCUMENT ME!
+     * Sets the information for the right part of the diff component. The DiffPanel will be updated.
      *
-     * @return  DOCUMENT ME!
+     * @param  content   The content of the file to be shown on the right side.
+     * @param  mimetype  The mimetype of the file to be shown on the right side.
+     * @param  title     The title of the file to be shown on the right side.
      */
-    public String getJsonRight() {
-        return jsonRight;
+    public void setRight(final String content, final String mimetype, final String title) {
+        this.right = new FileToDiff(content, mimetype, title);
+        update();
     }
 
     /**
-     * DOCUMENT ME!
+     * Sets the information for both parts of the diff component. The DiffPanel will be updated.
      *
-     * @param  jsonRight  DOCUMENT ME!
+     * @param  contentLeft    The content of the file to be shown on the left side.
+     * @param  mimetypeLeft   The mimetype of the file to be shown on the left side.
+     * @param  titleLeft      The title of the file to be shown on the left side.
+     * @param  contentRight   The content of the file to be shown on the right side.
+     * @param  mimetypeRight  The mimetype of the file to be shown on the right side.
+     * @param  titleRight     The title of the file to be shown on the right side.
      */
-    public void setJsonRight(final String jsonRight) {
-        this.jsonRight = jsonRight;
+    public void setLeftAndRight(final String contentLeft,
+            final String mimetypeLeft,
+            final String titleLeft,
+            final String contentRight,
+            final String mimetypeRight,
+            final String titleRight) {
+        this.left = new FileToDiff(contentLeft, mimetypeLeft, titleLeft);
+        this.right = new FileToDiff(contentRight, mimetypeRight, titleRight);
+        update();
+    }
+
+    /**
+     * Gives access to Netbeans' diff component.
+     *
+     * @return  Netbeans' diff component.
+     */
+    public DiffView getDiffView() {
+        return view;
     }
 
     /**
@@ -175,15 +182,194 @@ public class DiffPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        setLayout(new java.awt.BorderLayout());
+        pnlWaiting = new javax.swing.JPanel();
+        lblWaitingImage = new javax.swing.JLabel();
+        pnlDiff = new javax.swing.JPanel();
+
+        setLayout(new java.awt.CardLayout());
+
+        pnlWaiting.setLayout(new java.awt.BorderLayout());
+
+        lblWaitingImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblWaitingImage.setIcon(new javax.swing.ImageIcon(
+                getClass().getResource("/de/cismet/custom/visualdiff/load.png"))); // NOI18N
+        pnlWaiting.add(lblWaitingImage, java.awt.BorderLayout.CENTER);
+
+        add(pnlWaiting, "waiting");
+
+        pnlDiff.setLayout(new java.awt.BorderLayout());
+        add(pnlDiff, "diff");
     } // </editor-fold>//GEN-END:initComponents
 
+    //~ Inner Classes ----------------------------------------------------------
+
     /**
-     * DOCUMENT ME!
+     * A helper class to switch between both cards of its parent's layout.
+     *
+     * @version  $Revision$, $Date$
      */
-    public void clear() {
-        removeAll();
+    class ShowCardRunnable implements Runnable {
+
+        //~ Instance fields ----------------------------------------------------
+
+        private Container parent;
+        private String cardToShow;
+
+        //~ Constructors -------------------------------------------------------
+
+        /**
+         * Creates a new ShowCardRunnable object.
+         *
+         * @param  parent      The parent of this helper. Should be a DiffPanel object.
+         * @param  cardToShow  The card to display.
+         */
+        public ShowCardRunnable(final Container parent, final String cardToShow) {
+            this.parent = parent;
+            this.cardToShow = cardToShow;
+        }
+
+        //~ Methods ------------------------------------------------------------
+
+        @Override
+        public void run() {
+            if (parent.getLayout() instanceof CardLayout) {
+                ((CardLayout)parent.getLayout()).show(parent, cardToShow);
+            }
+        }
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
+
+    /**
+     * A wrapper class for the necessary information of the left or right part of Netbeans' diff component.
+     *
+     * @version  $Revision$, $Date$
+     */
+    public class FileToDiff {
+
+        //~ Instance fields ----------------------------------------------------
+
+        private String content;
+        private String mimetype;
+        private String title;
+
+        //~ Constructors -------------------------------------------------------
+
+        /**
+         * Creates a new FileToDiff object.
+         *
+         * @param  content   The content to diff.
+         * @param  mimetype  The mimetype of the content.
+         * @param  title     The title to display.
+         */
+        public FileToDiff(final String content, final String mimetype, final String title) {
+            this.content = content;
+            this.mimetype = mimetype;
+            this.title = title;
+        }
+
+        //~ Methods ------------------------------------------------------------
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
+        public String getContent() {
+            return content;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param  content  DOCUMENT ME!
+         */
+        public void setContent(final String content) {
+            this.content = content;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
+        public String getMimetype() {
+            return mimetype;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param  mimetype  DOCUMENT ME!
+         */
+        public void setMimetype(final String mimetype) {
+            this.mimetype = mimetype;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @return  DOCUMENT ME!
+         */
+        public String getTitle() {
+            return title;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param  title  DOCUMENT ME!
+         */
+        public void setTitle(final String title) {
+            this.title = title;
+        }
+    }
+
+    /**
+     * Custom StreamSource implementation which handles FileToDiff objects.
+     *
+     * @version  $Revision$, $Date$
+     */
+    private class MyStreamSource extends StreamSource {
+
+        //~ Instance fields ----------------------------------------------------
+
+        private FileToDiff fileToDiff;
+
+        //~ Constructors -------------------------------------------------------
+
+        /**
+         * Creates a new MyStreamSource object.
+         *
+         * @param  fileToDiff  The FileToDiff object to wrap.
+         */
+        public MyStreamSource(final FileToDiff fileToDiff) {
+            this.fileToDiff = fileToDiff;
+        }
+
+        //~ Methods ------------------------------------------------------------
+
+        @Override
+        public String getName() {
+            return "name";
+        }
+
+        @Override
+        public String getTitle() {
+            return fileToDiff.getTitle();
+        }
+
+        @Override
+        public String getMIMEType() {
+            return fileToDiff.getMimetype();
+        }
+
+        @Override
+        public Reader createReader() throws IOException {
+            return new StringReader(fileToDiff.getContent());
+        }
+
+        @Override
+        public Writer createWriter(final Difference[] conflicts) throws IOException {
+            return null;
+        }
+    }
 }

@@ -457,22 +457,22 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
      *
      * @param  evt  DOCUMENT ME!
      */
-    private void bRefreshActionPerformed(final java.awt.event.ActionEvent evt) {           //GEN-FIRST:event_bRefreshActionPerformed
+    private void bRefreshActionPerformed(final java.awt.event.ActionEvent evt) {        //GEN-FIRST:event_bRefreshActionPerformed
         LifecycleManager.getDefault().saveAll();
         try {
             refreshController();
         } catch (IOException e) {
-            Logger.getLogger(SingleDiffPanel.class.getName()).log(Level.SEVERE, "", e);    // elegant, nice and simple
-                                                                                           // exception logging
+            Logger.getLogger(SingleDiffPanel.class.getName()).log(Level.SEVERE, "", e); // elegant, nice and simple
+                                                                                        // exception logging
         }
-    }                                                                                      //GEN-LAST:event_bRefreshActionPerformed
+    }                                                                                   //GEN-LAST:event_bRefreshActionPerformed
 
     /**
      * DOCUMENT ME!
      *
      * @param  evt  DOCUMENT ME!
      */
-    private void bSwapActionPerformed(final java.awt.event.ActionEvent evt) {              //GEN-FIRST:event_bSwapActionPerformed
+    private void bSwapActionPerformed(final java.awt.event.ActionEvent evt) {           //GEN-FIRST:event_bSwapActionPerformed
         LifecycleManager.getDefault().saveAll();
         final FileObject temp = base;
         base = modified;
@@ -480,10 +480,10 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
         try {
             refreshController();
         } catch (IOException e) {
-            Logger.getLogger(SingleDiffPanel.class.getName()).log(Level.SEVERE, "", e);    // elegant, nice and simple
-                                                                                           // exception logging
+            Logger.getLogger(SingleDiffPanel.class.getName()).log(Level.SEVERE, "", e); // elegant, nice and simple
+                                                                                        // exception logging
         }
-    }                                                                                      //GEN-LAST:event_bSwapActionPerformed
+    }                                                                                   //GEN-LAST:event_bSwapActionPerformed
 
     /**
      * DOCUMENT ME!

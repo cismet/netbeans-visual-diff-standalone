@@ -534,8 +534,8 @@ class LineNumbersActionsBar extends JPanel implements Scrollable,
                 return;
             }
             int yOffset;
-            int linesDrawn = (clip.height / lineHeight) + 4;    // draw past clipping rectangle to avoid partially drawn
-                                                                // numbers
+            int linesDrawn = (clip.height / lineHeight) + 4; // draw past clipping rectangle to avoid partially drawn
+                                                             // numbers
             final int docLines = Utilities.getRowCount((BaseDocument)master.getEditorPane().getDocument());
             if ((lineNumber + linesDrawn) > docLines) {
                 linesDrawn = docLines - lineNumber;

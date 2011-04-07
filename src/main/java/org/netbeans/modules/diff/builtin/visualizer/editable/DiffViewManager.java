@@ -1079,11 +1079,11 @@ class DiffViewManager implements ChangeListener {
 
             final DecoratedDifference[] diffs = getDecorations();
             int lastDiffIndex = 0;
-            for (int rightOffset = 0; rightOffset < rightPanelHeightCached; rightOffset += 5) {    // count position for
-                                                                                                   // every fifth pix,
-                                                                                                   // others are
-                                                                                                   // linearly
-                                                                                                   // interpolated
+            for (int rightOffset = 0; rightOffset < rightPanelHeightCached; rightOffset += 5) { // count position for
+                                                                                                // every fifth pix,
+                                                                                                // others are
+                                                                                                // linearly
+                                                                                                // interpolated
                 DifferencePosition dpos = null;
                 int leftOffset;
                 // find diff for every fifth pix
