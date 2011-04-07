@@ -37,9 +37,9 @@ public class DiffPanel extends javax.swing.JPanel {
 
     //~ Instance fields --------------------------------------------------------
 
-    private DiffView view;
-    private FileToDiff left;
-    private FileToDiff right;
+    protected DiffView view;
+    protected FileToDiff left;
+    protected FileToDiff right;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblWaitingImage;
@@ -129,7 +129,7 @@ public class DiffPanel extends javax.swing.JPanel {
      * @param  title     The title of the file to be shown on the left side.
      */
     public void setLeft(final String content, final String mimetype, final String title) {
-        this.left = new FileToDiff(content, mimetype, title);
+        this.left = createFileToDiff(content, mimetype, title);
         update();
     }
 
@@ -141,7 +141,7 @@ public class DiffPanel extends javax.swing.JPanel {
      * @param  title     The title of the file to be shown on the right side.
      */
     public void setRight(final String content, final String mimetype, final String title) {
-        this.right = new FileToDiff(content, mimetype, title);
+        this.right = createFileToDiff(content, mimetype, title);
         update();
     }
 
@@ -161,8 +161,8 @@ public class DiffPanel extends javax.swing.JPanel {
             final String contentRight,
             final String mimetypeRight,
             final String titleRight) {
-        this.left = new FileToDiff(contentLeft, mimetypeLeft, titleLeft);
-        this.right = new FileToDiff(contentRight, mimetypeRight, titleRight);
+        this.left = createFileToDiff(contentLeft, mimetypeLeft, titleLeft);
+        this.right = createFileToDiff(contentRight, mimetypeRight, titleRight);
         update();
     }
 
@@ -173,6 +173,34 @@ public class DiffPanel extends javax.swing.JPanel {
      */
     public DiffView getDiffView() {
         return view;
+    }
+
+    /**
+     * Helper method to verify if a given content is valid. Content is valid, if it contains at least one character.
+     *
+     * @param   content  The content to verify.
+     *
+     * @return  A flag indicating whether the given content is valid or not.
+     */
+    protected static boolean isValidContent(final String content) {
+        return (content != null) && (content.trim().length() > 0);
+    }
+
+    /**
+     * A factory method to create FileToDiff objects. Returns null if the given content is not valid.
+     *
+     * @param   content   The content of the FileToDiff.
+     * @param   mimetype  The mimetype of the FileToDiff.
+     * @param   title     The title of the FileToDiff.
+     *
+     * @return  A FileToDiff object wrapping the given parameters or null if the given content is invalid.
+     */
+    protected static FileToDiff createFileToDiff(final String content, final String mimetype, final String title) {
+        if (isValidContent(content)) {
+            return new FileToDiff(content, mimetype, title);
+        }
+
+        return null;
     }
 
     /**
@@ -208,7 +236,7 @@ public class DiffPanel extends javax.swing.JPanel {
      *
      * @version  $Revision$, $Date$
      */
-    class ShowCardRunnable implements Runnable {
+    protected class ShowCardRunnable implements Runnable {
 
         //~ Instance fields ----------------------------------------------------
 
@@ -243,7 +271,7 @@ public class DiffPanel extends javax.swing.JPanel {
      *
      * @version  $Revision$, $Date$
      */
-    public class FileToDiff {
+    protected static class FileToDiff {
 
         //~ Instance fields ----------------------------------------------------
 
@@ -328,7 +356,7 @@ public class DiffPanel extends javax.swing.JPanel {
      *
      * @version  $Revision$, $Date$
      */
-    private class MyStreamSource extends StreamSource {
+    protected static class MyStreamSource extends StreamSource {
 
         //~ Instance fields ----------------------------------------------------
 

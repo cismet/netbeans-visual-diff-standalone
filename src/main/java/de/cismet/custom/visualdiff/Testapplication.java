@@ -229,7 +229,9 @@ public class Testapplication extends javax.swing.JFrame {
     private void btnNextDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnNextDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
-            view.setCurrentDifference((view.getCurrentDifference() + 1) % view.getDifferenceCount());
+            if (view.canSetCurrentDifference()) {
+                view.setCurrentDifference((view.getCurrentDifference() + 1) % view.getDifferenceCount());
+            }
         }
     }                                                                                     //GEN-LAST:event_btnNextDifferenceActionPerformed
 
@@ -241,9 +243,11 @@ public class Testapplication extends javax.swing.JFrame {
     private void btnPrevDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnPrevDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
-            view.setCurrentDifference(((view.getCurrentDifference() == 0) ? (view.getDifferenceCount() - 1)
-                                                                          : (view.getCurrentDifference() - 1))
-                        % view.getDifferenceCount());
+            if (view.canSetCurrentDifference()) {
+                view.setCurrentDifference(((view.getCurrentDifference() == 0) ? (view.getDifferenceCount() - 1)
+                                                                              : (view.getCurrentDifference() - 1))
+                            % view.getDifferenceCount());
+            }
         }
     }                                                                                     //GEN-LAST:event_btnPrevDifferenceActionPerformed
 
