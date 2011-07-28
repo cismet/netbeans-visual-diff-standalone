@@ -44,7 +44,9 @@ public class DiffPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblWaitingImage;
     private javax.swing.JPanel pnlDiff;
+    private javax.swing.JPanel pnlFilesMissing;
     private javax.swing.JPanel pnlWaiting;
+    private javax.swing.JLabel txtFilesMissing;
     // End of variables declaration//GEN-END:variables
 
     //~ Constructors -----------------------------------------------------------
@@ -54,7 +56,6 @@ public class DiffPanel extends javax.swing.JPanel {
      */
     public DiffPanel() {
         initComponents();
-        // showWaiting();
     }
 
     //~ Methods ----------------------------------------------------------------
@@ -65,11 +66,13 @@ public class DiffPanel extends javax.swing.JPanel {
      * and displayed.
      */
     public void update() {
-        showWaiting();
         if ((left == null) || (right == null)) {
+            showFilesMissing();
             LOG.warn("At least one file is null. The diff component can't be created.");
             return;
         }
+
+        showWaiting();
 
         new SwingWorker<DiffView, Void>() {
 
@@ -93,6 +96,19 @@ public class DiffPanel extends javax.swing.JPanel {
                     }
                 }
             }.execute();
+    }
+
+    /**
+     * Starts a new Runnable which shows the "files are missing" screen.
+     */
+    public void showFilesMissing() {
+        final Runnable waitRunnable = new ShowCardRunnable(this, "filesMissing"); // NOI18N
+
+        if (EventQueue.isDispatchThread()) {
+            waitRunnable.run();
+        } else {
+            EventQueue.invokeLater(waitRunnable);
+        }
     }
 
     /**
@@ -210,11 +226,23 @@ public class DiffPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        pnlFilesMissing = new javax.swing.JPanel();
+        txtFilesMissing = new javax.swing.JLabel();
         pnlWaiting = new javax.swing.JPanel();
         lblWaitingImage = new javax.swing.JLabel();
         pnlDiff = new javax.swing.JPanel();
 
         setLayout(new java.awt.CardLayout());
+
+        pnlFilesMissing.setLayout(new java.awt.BorderLayout());
+
+        txtFilesMissing.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtFilesMissing.setText(org.openide.util.NbBundle.getMessage(
+                DiffPanel.class,
+                "DiffPanel.txtFilesMissing.text")); // NOI18N
+        pnlFilesMissing.add(txtFilesMissing, java.awt.BorderLayout.CENTER);
+
+        add(pnlFilesMissing, "filesMissing");
 
         pnlWaiting.setLayout(new java.awt.BorderLayout());
 
