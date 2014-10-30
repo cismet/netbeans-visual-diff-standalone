@@ -1,4 +1,4 @@
-netbeans-visual-diff-standalone
+netbeans-visual-diff-standalone [![Build Status](http://ci.cismet.de/buildStatus/icon?job=netbeans-visual-diff-standalone)](https://ci.cismet.de/job/netbeans-visual-diff-standalone/)
 ===============================
 
 Use the Netbeans diff component in any Java Swing project
