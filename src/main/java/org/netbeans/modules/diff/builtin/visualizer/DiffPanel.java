@@ -1292,7 +1292,7 @@ public class DiffPanel extends javax.swing.JPanel implements javax.swing.event.C
      * Rectangle(0, 0, 0, 0);         else rv.setBounds(0, 0, 0, 0);         return rv;     }          public int
      * getHeight() {         return 0;     }          public int getWidth() {         return 0;     }          public
      * Dimension getSize() {         return new Dimension(0, 0);     }          public Dimension getSize(Dimension rv) {
-     *     if (rv == null) rv = new Dimension(0, 0);         else rv.setSize(0, 0);         return rv;     } public
+     *   if (rv == null) rv = new Dimension(0, 0);         else rv.setSize(0, 0);         return rv;     } public
      * Dimension getPreferredSize() {         return new Dimension(0, 0);     } } }
      */
 

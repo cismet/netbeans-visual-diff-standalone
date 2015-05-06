@@ -47,14 +47,14 @@ public class Testapplication extends javax.swing.JFrame {
     private static final String MIMETYPE_JSON = "text/javascript";
     private static final String MIMETYPE_TEXT = "text/plain";
 
-    private static final String FILENAME1_HTML = "E:\\Projekte\\visualdiff\\filestodiff\\html1.html";
-    private static final String FILENAME2_HTML = "E:\\Projekte\\visualdiff\\filestodiff\\html2.html";
-    private static final String FILENAME1_JAVA = "E:\\Projekte\\visualdiff\\filestodiff\\java1.xjava";
-    private static final String FILENAME2_JAVA = "E:\\Projekte\\visualdiff\\filestodiff\\java2.xjava";
-    private static final String FILENAME1_JSON = "E:\\Projekte\\visualdiff\\filestodiff\\json1.json";
-    private static final String FILENAME2_JSON = "E:\\Projekte\\visualdiff\\filestodiff\\json2.json";
-    private static final String FILENAME1_TEXT = "E:\\Projekte\\visualdiff\\filestodiff\\text1.txt";
-    private static final String FILENAME2_TEXT = "E:\\Projekte\\visualdiff\\filestodiff\\text2.txt";
+    private static final String FILENAME1_HTML = "/Users/thorsten/Desktop/filestodiff/html1.html";
+    private static final String FILENAME2_HTML = "/Users/thorsten/Desktop/filestodiff/html2.html";
+    private static final String FILENAME1_JAVA = "/Users/thorsten/Desktop/filestodiff/java1.java";
+    private static final String FILENAME2_JAVA = "/Users/thorsten/Desktop/filestodiff/java2.java";
+    private static final String FILENAME1_JSON = "/Users/thorsten/Desktop/filestodiff/json1.json";
+    private static final String FILENAME2_JSON = "/Users/thorsten/Desktop/filestodiff/json2.json";
+    private static final String FILENAME1_TEXT = "/Users/thorsten/Desktop/filestodiff/text1.txt";
+    private static final String FILENAME2_TEXT = "/Users/thorsten/Desktop/filestodiff/text2.txt";
 
     //~ Instance fields --------------------------------------------------------
 
