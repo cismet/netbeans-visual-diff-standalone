@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-diff</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-java-editor</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -323,7 +323,7 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-editor-errorstripe</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -370,7 +370,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-editor-lib</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -418,7 +418,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-java-source</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -554,7 +554,7 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-editor-settings-storage</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -586,7 +586,7 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-core-startup</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -606,7 +606,7 @@
         <dependency>
             <groupId>org.netbeans.modules</groupId>
             <artifactId>org-netbeans-modules-editor-mimelookup-impl</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -638,7 +638,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-editor-codetemplates</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -734,7 +734,7 @@
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-netbeans-modules-parsing-api</artifactId>
-            <version>RELEASE691</version>
+            <version>RELEASE802</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
@@ -814,6 +814,11 @@
                     <groupId>org.netbeans.api</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.swinglabs</groupId>
+            <artifactId>swing-layout</artifactId>
+            <version>1.0.3</version>
         </dependency>
     </dependencies>
 
