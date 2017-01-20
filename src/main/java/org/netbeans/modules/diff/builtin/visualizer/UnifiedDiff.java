@@ -112,6 +112,7 @@ final class UnifiedDiff {
 
         final Difference[] diffs = diffInfo.getDifferences();
 
+        //J-
         for (int currentDifference = 0; currentDifference < diffs.length;) {
             // the new hunk will span differences from currentDifference to lastDifference (exclusively)
             final int lastDifference = getLastIndex(currentDifference);
@@ -119,6 +120,7 @@ final class UnifiedDiff {
             dumpHunk(buffer, hunk);
             currentDifference = lastDifference;
         }
+        //J+
 
         return buffer.toString();
     }

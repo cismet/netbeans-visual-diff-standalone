@@ -47,14 +47,14 @@ public class Testapplication extends javax.swing.JFrame {
     private static final String MIMETYPE_JSON = "text/javascript";
     private static final String MIMETYPE_TEXT = "text/plain";
 
-    private static final String FILENAME1_HTML = "E:\\Projekte\\visualdiff\\filestodiff\\html1.html";
-    private static final String FILENAME2_HTML = "E:\\Projekte\\visualdiff\\filestodiff\\html2.html";
-    private static final String FILENAME1_JAVA = "E:\\Projekte\\visualdiff\\filestodiff\\java1.xjava";
-    private static final String FILENAME2_JAVA = "E:\\Projekte\\visualdiff\\filestodiff\\java2.xjava";
-    private static final String FILENAME1_JSON = "E:\\Projekte\\visualdiff\\filestodiff\\json1.json";
-    private static final String FILENAME2_JSON = "E:\\Projekte\\visualdiff\\filestodiff\\json2.json";
-    private static final String FILENAME1_TEXT = "E:\\Projekte\\visualdiff\\filestodiff\\text1.txt";
-    private static final String FILENAME2_TEXT = "E:\\Projekte\\visualdiff\\filestodiff\\text2.txt";
+    private static final String FILENAME1_HTML = "/tmp/filestodiff/html1.html";
+    private static final String FILENAME2_HTML = "/tmp/filestodiff/html2.html";
+    private static final String FILENAME1_JAVA = "/tmp/filestodiff/java1.java";
+    private static final String FILENAME2_JAVA = "/tmp/filestodiff/java2.java";
+    private static final String FILENAME1_JSON = "/tmp/filestodiff/json1.json";
+    private static final String FILENAME2_JSON = "/tmp/filestodiff/json2.json";
+    private static final String FILENAME1_TEXT = "/tmp/filestodiff/text1.txt";
+    private static final String FILENAME2_TEXT = "/tmp/filestodiff/text2.txt";
 
     //~ Instance fields --------------------------------------------------------
 
@@ -80,8 +80,8 @@ public class Testapplication extends javax.swing.JFrame {
     public Testapplication() throws Exception {
         initComponents();
 
-        final File file1 = new File(FILENAME1_TEXT);
-        final File file2 = new File(FILENAME2_TEXT);
+        final File file1 = new File(FILENAME1_JSON);
+        final File file2 = new File(FILENAME2_JSON);
 
         pnlDiff = new DiffPanel();
         pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
