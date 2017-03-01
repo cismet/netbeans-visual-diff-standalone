@@ -1,6 +1,6 @@
 /***************************************************
 *
-* cismet GmbH, Saarbruecken, Germany
+* cismet GmbH, Saarbrücken, Germany
 *
 *              ... and it just works.
 *
@@ -47,14 +47,14 @@ public class Testapplication extends javax.swing.JFrame {
     private static final String MIMETYPE_JSON = "text/javascript";
     private static final String MIMETYPE_TEXT = "text/plain";
 
-    private static final String FILENAME1_HTML = "src/test/resources/filestodiff/html1.html";
-    private static final String FILENAME2_HTML = "src/test/resources/filestodiff/html2.html";
-    private static final String FILENAME1_JAVA = "src/test/resources/filestodiff/java1.java";
-    private static final String FILENAME2_JAVA = "src/test/resources/filestodiff/java2.java";
-    private static final String FILENAME1_JSON = "src/test/resources/filestodiff/json1.json";
-    private static final String FILENAME2_JSON = "src/test/resources/filestodiff/json2.json";
-    private static final String FILENAME1_TEXT = "src/test/resources/filestodiff/text1.txt";
-    private static final String FILENAME2_TEXT = "src/test/resources/filestodiff/text2.txt";
+    private static final String FILENAME1_HTML = "/tmp/filestodiff/html1.html";
+    private static final String FILENAME2_HTML = "/tmp/filestodiff/html2.html";
+    private static final String FILENAME1_JAVA = "/tmp/filestodiff/java1.java";
+    private static final String FILENAME2_JAVA = "/tmp/filestodiff/java2.java";
+    private static final String FILENAME1_JSON = "/tmp/CIDS.SPH_SPIELHALLE.1.json";
+    private static final String FILENAME2_JSON = "/tmp/CIDS.SPH_SPIELHALLE.1.json";
+    private static final String FILENAME1_TEXT = "/tmp/filestodiff/text1.txt";
+    private static final String FILENAME2_TEXT = "/tmp/filestodiff/text2.txt";
 
     //~ Instance fields --------------------------------------------------------
 
@@ -82,7 +82,7 @@ public class Testapplication extends javax.swing.JFrame {
 
         final File file1 = new File(FILENAME1_JSON);
         final File file2 = new File(FILENAME2_JSON);
-
+        
         System.out.println(file1.toString());
         System.out.println(file2.toString());
 
@@ -229,21 +229,21 @@ public class Testapplication extends javax.swing.JFrame {
      *
      * @param  evt  The event to handle.
      */
-    private void btnNextDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnNextDifferenceActionPerformed
+    private void btnNextDifferenceActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
             if (view.canSetCurrentDifference()) {
                 view.setCurrentDifference((view.getCurrentDifference() + 1) % view.getDifferenceCount());
             }
         }
-    }                                                                                     //GEN-LAST:event_btnNextDifferenceActionPerformed
+    }//GEN-LAST:event_btnNextDifferenceActionPerformed
 
     /**
      * The action handler for the 'previous difference' button. Decreases the 'current difference' property of the view.
      *
      * @param  evt  The event to handle.
      */
-    private void btnPrevDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnPrevDifferenceActionPerformed
+    private void btnPrevDifferenceActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
             if (view.canSetCurrentDifference()) {
@@ -252,14 +252,14 @@ public class Testapplication extends javax.swing.JFrame {
                             % view.getDifferenceCount());
             }
         }
-    }                                                                                     //GEN-LAST:event_btnPrevDifferenceActionPerformed
+    }//GEN-LAST:event_btnPrevDifferenceActionPerformed
 
     /**
      * The action handler for the 'HTML' button. Diffs two HTML files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffHTMLFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffHTMLFilesActionPerformed
+    private void btnDiffHTMLFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffHTMLFilesActionPerformed
         final File file1 = new File(FILENAME1_HTML);
         final File file2 = new File(FILENAME2_HTML);
         try {
@@ -272,14 +272,14 @@ public class Testapplication extends javax.swing.JFrame {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffHTMLFilesActionPerformed
+    }//GEN-LAST:event_btnDiffHTMLFilesActionPerformed
 
     /**
      * The action handler for the 'Java' button. Diffs two Java files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffJavaFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffJavaFilesActionPerformed
+    private void btnDiffJavaFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffJavaFilesActionPerformed
         final File file1 = new File(FILENAME1_JAVA);
         final File file2 = new File(FILENAME2_JAVA);
         try {
@@ -292,14 +292,14 @@ public class Testapplication extends javax.swing.JFrame {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffJavaFilesActionPerformed
+    }//GEN-LAST:event_btnDiffJavaFilesActionPerformed
 
     /**
      * The action handler for the 'JSON' button. Diffs two JSON files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffJSONFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffJSONFilesActionPerformed
+    private void btnDiffJSONFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffJSONFilesActionPerformed
         final File file1 = new File(FILENAME1_JSON);
         final File file2 = new File(FILENAME2_JSON);
         try {
@@ -312,14 +312,14 @@ public class Testapplication extends javax.swing.JFrame {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffJSONFilesActionPerformed
+    }//GEN-LAST:event_btnDiffJSONFilesActionPerformed
 
     /**
      * The action handler for the 'Text' button. Diffs two text files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffTextFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffTextFilesActionPerformed
+    private void btnDiffTextFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffTextFilesActionPerformed
         final File file1 = new File(FILENAME1_TEXT);
         final File file2 = new File(FILENAME2_TEXT);
         try {
@@ -332,7 +332,7 @@ public class Testapplication extends javax.swing.JFrame {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffTextFilesActionPerformed
+    }//GEN-LAST:event_btnDiffTextFilesActionPerformed
 
     /**
      * DOCUMENT ME!

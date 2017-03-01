@@ -51,8 +51,11 @@
 package org.netbeans.modules.diff.builtin.visualizer.editable;
 
 import org.netbeans.api.diff.Difference;
-import org.netbeans.editor.*;
 import org.netbeans.editor.BaseDocument;
+import org.netbeans.editor.EditorUI;
+import org.netbeans.editor.GuardedDocument;
+import org.netbeans.editor.MarkBlock;
+import org.netbeans.editor.MarkBlockChain;
 import org.netbeans.editor.Utilities;
 import org.netbeans.spi.diff.DiffProvider;
 import org.netbeans.spi.editor.highlighting.HighlightsContainer;
