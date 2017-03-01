@@ -16,7 +16,6 @@ import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -90,7 +89,8 @@ public class Testapplication extends javax.swing.JFrame {
         System.out.println(file2.toString());
 
         pnlDiff = new DiffPanel();
-        pnlDiff.setLeftAndRight(this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+        pnlDiff.setLeftAndRight(
+                this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
             MIMETYPE_TEXT,
             file1.getName(),
             this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
@@ -309,7 +309,7 @@ public class Testapplication extends javax.swing.JFrame {
         final File file2 = new File(FILENAME2_JSON);
         try {
             pnlDiff.setLeftAndRight(
-                    this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
                 MIMETYPE_JSON,
                 file1.getName(),
                 this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
