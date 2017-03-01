@@ -15,9 +15,12 @@ import java.awt.BorderLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 /**
  * This is a test which demonstrates the use of the VisualDiff component.
@@ -87,10 +90,10 @@ public class Testapplication extends javax.swing.JFrame {
         System.out.println(file2.toString());
 
         pnlDiff = new DiffPanel();
-        pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
+        pnlDiff.setLeftAndRight(this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
             MIMETYPE_TEXT,
             file1.getName(),
-            getLines(new FileReader(file2)),
+            this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
             MIMETYPE_TEXT,
             file2.getName());
         getContentPane().add(pnlDiff, BorderLayout.CENTER);
@@ -229,21 +232,21 @@ public class Testapplication extends javax.swing.JFrame {
      *
      * @param  evt  The event to handle.
      */
-    private void btnNextDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnNextDifferenceActionPerformed
+    private void btnNextDifferenceActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
             if (view.canSetCurrentDifference()) {
                 view.setCurrentDifference((view.getCurrentDifference() + 1) % view.getDifferenceCount());
             }
         }
-    }                                                                                     //GEN-LAST:event_btnNextDifferenceActionPerformed
+    }//GEN-LAST:event_btnNextDifferenceActionPerformed
 
     /**
      * The action handler for the 'previous difference' button. Decreases the 'current difference' property of the view.
      *
      * @param  evt  The event to handle.
      */
-    private void btnPrevDifferenceActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnPrevDifferenceActionPerformed
+    private void btnPrevDifferenceActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevDifferenceActionPerformed
         if (pnlDiff.getDiffView() != null) {
             final DiffView view = pnlDiff.getDiffView();
             if (view.canSetCurrentDifference()) {
@@ -252,87 +255,91 @@ public class Testapplication extends javax.swing.JFrame {
                             % view.getDifferenceCount());
             }
         }
-    }                                                                                     //GEN-LAST:event_btnPrevDifferenceActionPerformed
+    }//GEN-LAST:event_btnPrevDifferenceActionPerformed
 
     /**
      * The action handler for the 'HTML' button. Diffs two HTML files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffHTMLFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffHTMLFilesActionPerformed
+    private void btnDiffHTMLFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffHTMLFilesActionPerformed
         final File file1 = new File(FILENAME1_HTML);
         final File file2 = new File(FILENAME2_HTML);
         try {
-            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
+            pnlDiff.setLeftAndRight(
+                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
                 MIMETYPE_HTML,
                 file1.getName(),
-                getLines(new FileReader(file2)),
+                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
                 MIMETYPE_HTML,
                 file2.getName());
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffHTMLFilesActionPerformed
+    }//GEN-LAST:event_btnDiffHTMLFilesActionPerformed
 
     /**
      * The action handler for the 'Java' button. Diffs two Java files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffJavaFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffJavaFilesActionPerformed
+    private void btnDiffJavaFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffJavaFilesActionPerformed
         final File file1 = new File(FILENAME1_JAVA);
         final File file2 = new File(FILENAME2_JAVA);
         try {
-            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
+            pnlDiff.setLeftAndRight(
+                   this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
                 MIMETYPE_JAVA,
                 file1.getName(),
-                getLines(new FileReader(file2)),
+                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
                 MIMETYPE_JAVA,
                 file2.getName());
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffJavaFilesActionPerformed
+    }//GEN-LAST:event_btnDiffJavaFilesActionPerformed
 
     /**
      * The action handler for the 'JSON' button. Diffs two JSON files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffJSONFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffJSONFilesActionPerformed
+    private void btnDiffJSONFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffJSONFilesActionPerformed
         final File file1 = new File(FILENAME1_JSON);
         final File file2 = new File(FILENAME2_JSON);
         try {
-            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
+            pnlDiff.setLeftAndRight(
+                    this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
                 MIMETYPE_JSON,
                 file1.getName(),
-                getLines(new FileReader(file2)),
+                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
                 MIMETYPE_JSON,
                 file2.getName());
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffJSONFilesActionPerformed
+    }//GEN-LAST:event_btnDiffJSONFilesActionPerformed
 
     /**
      * The action handler for the 'Text' button. Diffs two text files.
      *
      * @param  evt  The event to handle.
      */
-    private void btnDiffTextFilesActionPerformed(final java.awt.event.ActionEvent evt) { //GEN-FIRST:event_btnDiffTextFilesActionPerformed
+    private void btnDiffTextFilesActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiffTextFilesActionPerformed
         final File file1 = new File(FILENAME1_TEXT);
         final File file2 = new File(FILENAME2_TEXT);
         try {
-            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
+            pnlDiff.setLeftAndRight(
+                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
                 MIMETYPE_TEXT,
                 file1.getName(),
-                getLines(new FileReader(file2)),
+               this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
                 MIMETYPE_TEXT,
                 file2.getName());
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
-    }                                                                                    //GEN-LAST:event_btnDiffTextFilesActionPerformed
+    }//GEN-LAST:event_btnDiffTextFilesActionPerformed
 
     /**
      * DOCUMENT ME!
