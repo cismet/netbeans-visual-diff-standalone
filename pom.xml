@@ -16,6 +16,7 @@
             WARNING: This DOES NOT override the netbeans.version in
             cismet-ext-bom -> dependencyManagement needed to redeclare
             netbeans dependencies
+            See https://cismet.slack.com/files/pascal.dihe/F4C0V99H9/netbeans-visual-diff-standalone
         -->
         <netbeans.version>RELEASE731</netbeans.version>
     </properties>
