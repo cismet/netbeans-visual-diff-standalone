@@ -62,7 +62,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath ${packageClassName}</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
             <exec.classpathScope>${classPathScope}</exec.classpathScope>
         </properties>
@@ -80,7 +80,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
             <exec.classpathScope>${classPathScope}</exec.classpathScope>
             <jpda.listen>true</jpda.listen>
@@ -118,7 +118,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath ${packageClassName}</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -classpath %classpath ${packageClassName}</exec.args>
             <exec.executable>java</exec.executable>
             <exec.classpathScope>${classPathScope}</exec.classpathScope>
         </properties>
@@ -149,7 +149,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath -Dlog4j.configuration=file:./src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -classpath %classpath -Dlog4j.configuration=file:./src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
         <activatedProfiles>
@@ -166,7 +166,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath -Dlog4j.configuration=file:src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -Xdebug -Xrunjdwp:transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath -Dlog4j.configuration=file:src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
         </properties>
@@ -184,7 +184,7 @@
             <goal>org.codehaus.mojo:exec-maven-plugin:exec</goal>
         </goals>
         <properties>
-            <exec.args>-classpath %classpath -Dlog4j.configuration=file:src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
+            <exec.args>-Dfile.encoding=UTF-8 -classpath %classpath -Dlog4j.configuration=file:src/test/resources/log4j.properties de.cismet.custom.visualdiff.Testapplication</exec.args>
             <exec.executable>java</exec.executable>
         </properties>
         <activatedProfiles>
