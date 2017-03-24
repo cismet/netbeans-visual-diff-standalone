@@ -16,6 +16,8 @@ import java.io.Reader;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openide.util.lookup.ServiceProvider;
+import org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider;
 
 /**
  * A <code>DiffProvider</code> which uses the custom <code>HuntDiff</code> class to compute differences of two readers.
@@ -25,14 +27,15 @@ import java.util.List;
  * EditableDiffView</code> invokes <code>DiffModuleConfig.getDefault().getDefaultDiffProvider()</code> to obtain a
  * default <code>DiffProvider</code>. But since Netbeans' <code>DiffModuleConfig</code> class only returns instances of
  * the Netbeans classes <code>BuiltInDiffProvider</code> and <code>CmdLineDiffProvider</code> the class <code>
- * EditableDiffView</code> had to be changed. This is why the sources of the package <code>
- * org.netbeans.modules.diff.builtin</code> are included in this project. Now <code>EditableDiffView</code> calls the
- * constructor of <code>MyDiffProvider</code> to compute the differences.</p>
+ * MyDiffProvider</code> has to extend <code>BuiltInDiffProvider</code> ans override the Lookup.</p>
  *
  * @author   jweintraut
  * @version  $Revision$, $Date$
  */
-public class MyDiffProvider extends DiffProvider {
+@ServiceProvider(
+        service = DiffProvider.class,
+        supersedes = {"org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider"})
+public class MyDiffProvider extends BuiltInDiffProvider {
 
     //~ Methods ----------------------------------------------------------------
 

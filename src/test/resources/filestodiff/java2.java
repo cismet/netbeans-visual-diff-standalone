@@ -15,11 +15,9 @@ import java.awt.BorderLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 
 /**
  * This is a test which demonstrates the use of the VisualDiff component.
@@ -49,12 +47,12 @@ public class Testapplication extends javax.swing.JFrame {
     private static final String MIMETYPE_JSON = "text/javascript";
     private static final String MIMETYPE_TEXT = "text/plain";
 
-    private static final String FILENAME1_HTML = "src/test/resources/filestodiff/html1.html";
+    private static final String FILENAME1_HTML = "src/test/resoürces/filestodiff/html1.html";
     private static final String FILENAME2_HTML = "src/test/resources/filestodiff/html2.html";
     private static final String FILENAME1_JAVA = "src/test/resources/filestodiff/java1.java";
     private static final String FILENAME2_JAVA = "src/test/resources/filestodiff/java2.java";
-    private static final String FILENAME1_JSON = "src/test/resources/filestodiff/json1.json";
-    private static final String FILENAME2_JSON = "src/test/resources/filestodiff/json2.json";
+    private static final String FILENAME1_JSON = "src/test/resources/CIDS.SPH_SPIELHALLE.1.json";
+    private static final String FILENAME2_JSON = "src/test/resources/CIDS.SPH_SPIELHALLE.1.json";
     private static final String FILENAME1_TEXT = "src/test/resources/filestodiff/text1.txt";
     private static final String FILENAME2_TEXT = "src/test/resources/filestodiff/text2.txt";
 
@@ -84,16 +82,15 @@ public class Testapplication extends javax.swing.JFrame {
 
         final File file1 = new File(FILENAME1_JSON);
         final File file2 = new File(FILENAME2_JSON);
-
+        
         System.out.println(file1.toString());
         System.out.println(file2.toString());
 
         pnlDiff = new DiffPanel();
-        pnlDiff.setLeftAndRight(
-                this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+        pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
             MIMETYPE_TEXT,
             file1.getName(),
-            this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+            getLines(new FileReader(file2)),
             MIMETYPE_TEXT,
             file2.getName());
         getContentPane().add(pnlDiff, BorderLayout.CENTER);
@@ -266,11 +263,10 @@ public class Testapplication extends javax.swing.JFrame {
         final File file1 = new File(FILENAME1_HTML);
         final File file2 = new File(FILENAME2_HTML);
         try {
-            pnlDiff.setLeftAndRight(
-                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
                 MIMETYPE_HTML,
                 file1.getName(),
-                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+                getLines(new FileReader(file2)),
                 MIMETYPE_HTML,
                 file2.getName());
         } catch (IOException ex) {
@@ -287,11 +283,10 @@ public class Testapplication extends javax.swing.JFrame {
         final File file1 = new File(FILENAME1_JAVA);
         final File file2 = new File(FILENAME2_JAVA);
         try {
-            pnlDiff.setLeftAndRight(
-                   this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
                 MIMETYPE_JAVA,
                 file1.getName(),
-                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+                getLines(new FileReader(file2)),
                 MIMETYPE_JAVA,
                 file2.getName());
         } catch (IOException ex) {
@@ -308,11 +303,10 @@ public class Testapplication extends javax.swing.JFrame {
         final File file1 = new File(FILENAME1_JSON);
         final File file2 = new File(FILENAME2_JSON);
         try {
-            pnlDiff.setLeftAndRight(
-                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
                 MIMETYPE_JSON,
                 file1.getName(),
-                this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+                getLines(new FileReader(file2)),
                 MIMETYPE_JSON,
                 file2.getName());
         } catch (IOException ex) {
@@ -329,11 +323,10 @@ public class Testapplication extends javax.swing.JFrame {
         final File file1 = new File(FILENAME1_TEXT);
         final File file2 = new File(FILENAME2_TEXT);
         try {
-            pnlDiff.setLeftAndRight(
-                    this.getLines(new InputStreamReader(new FileInputStream(file1), Charset.defaultCharset())),
+            pnlDiff.setLeftAndRight(getLines(new FileReader(file1)),
                 MIMETYPE_TEXT,
                 file1.getName(),
-               this.getLines(new InputStreamReader(new FileInputStream(file2), Charset.defaultCharset())),
+                getLines(new FileReader(file2)),
                 MIMETYPE_TEXT,
                 file2.getName());
         } catch (IOException ex) {

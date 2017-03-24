@@ -1,0 +1,8 @@
+Testapplication.btnNextDifference.text=Next difference
+Testapplication.btnPrevDifference.text=Previous difference
+Testapplication.title=VisualDiff Testapplication
+Testapplication.btnDiffJSONFiles.text=JSON
+Testapplication.btnDiffJavaFiles.text=Java
+Testapplication.btnDiffHTMLFiles.text=HTML
+Testapplication.btnDiffTextFiles.text=Text
+DiffPanel.txtFilesMissing.text=Bitte geben Sie die zu vergleichenden Dateien an.
