@@ -8,7 +8,10 @@
 package de.cismet.custom.visualdiff;
 
 import org.netbeans.api.diff.Difference;
+import org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider;
 import org.netbeans.spi.diff.DiffProvider;
+
+import org.openide.util.lookup.ServiceProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +19,6 @@ import java.io.Reader;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openide.util.lookup.ServiceProvider;
-import org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider;
 
 /**
  * A <code>DiffProvider</code> which uses the custom <code>HuntDiff</code> class to compute differences of two readers.
@@ -33,8 +34,9 @@ import org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider;
  * @version  $Revision$, $Date$
  */
 @ServiceProvider(
-        service = DiffProvider.class,
-        supersedes = {"org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider"})
+    service = DiffProvider.class,
+    supersedes = { "org.netbeans.modules.diff.builtin.provider.BuiltInDiffProvider" }
+)
 public class MyDiffProvider extends BuiltInDiffProvider {
 
     //~ Methods ----------------------------------------------------------------
