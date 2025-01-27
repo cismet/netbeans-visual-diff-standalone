@@ -23,7 +23,7 @@
 
     <groupId>de.cismet.custom</groupId>
     <artifactId>netbeans-visual-diff-standalone</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>8.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>NetBeans Visual Diff Standalone</name>
@@ -324,7 +324,7 @@
                     <dependencySets>
                         <dependencySet>
                             <excludes>
-                                <exclude></exclude>
+                                <exclude />
                             </excludes>
                         </dependencySet>
                     </dependencySets>
