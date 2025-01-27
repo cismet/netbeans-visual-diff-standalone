@@ -38,7 +38,7 @@ import java.io.Reader;
  * @author   thorsten
  * @version  $Revision$, $Date$
  */
-public class Testapplication extends javax.swing.JFrame {
+public class java1 extends javax.swing.JFrame {
 
     //~ Static fields/initializers ---------------------------------------------
 
@@ -77,7 +77,7 @@ public class Testapplication extends javax.swing.JFrame {
      *
      * @throws  Exception  DOCUMENT ME!
      */
-    public Testapplication() throws Exception {
+    public java1() throws Exception {
         initComponents();
 
         final File file1 = new File(FILENAME1_JSON);

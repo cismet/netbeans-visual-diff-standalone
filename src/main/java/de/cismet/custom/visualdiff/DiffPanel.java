@@ -7,6 +7,8 @@
 ****************************************************/
 package de.cismet.custom.visualdiff;
 
+import org.apache.log4j.Logger;
+
 import org.netbeans.api.diff.Diff;
 import org.netbeans.api.diff.DiffView;
 import org.netbeans.api.diff.Difference;
@@ -33,7 +35,7 @@ public class DiffPanel extends javax.swing.JPanel {
 
     //~ Static fields/initializers ---------------------------------------------
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DiffPanel.class);
+    private static final Logger LOG = Logger.getLogger(DiffPanel.class);
 
     //~ Instance fields --------------------------------------------------------
 

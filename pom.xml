@@ -8,7 +8,7 @@
     <parent>
         <groupId>de.cismet</groupId>
         <artifactId>cismet-parent</artifactId>
-        <version>7.0</version>
+        <version>8.0</version>
     </parent>
     
     <properties>
@@ -18,12 +18,12 @@
             netbeans dependencies
             See https://cismet.slack.com/files/pascal.dihe/F4C0V99H9/netbeans-visual-diff-standalone
         -->
-        <netbeans.version>RELEASE731</netbeans.version>
+        <netbeans.version>RELEASE210</netbeans.version>
     </properties>
 
     <groupId>de.cismet.custom</groupId>
     <artifactId>netbeans-visual-diff-standalone</artifactId>
-    <version>7.0</version>
+    <version>8.0</version>
     <packaging>jar</packaging>
     
     <name>NetBeans Visual Diff Standalone</name>
@@ -33,7 +33,7 @@
         <connection>https://github.com/cismet/netbeans-visual-diff-standalone.git</connection>
         <developerConnection>scm:git:git@github.com:cismet/netbeans-visual-diff-standalone.git</developerConnection>
         <url>https://github.com/cismet/netbeans-visual-diff-standalone</url>
-        <tag>v7.0</tag>
+        <tag>v8.0</tag>
     </scm>
 
     <ciManagement>
@@ -52,7 +52,7 @@
             <dependency>
                 <groupId>de.cismet</groupId>
                 <artifactId>cismet-ext-bom</artifactId>
-                <version>7.0</version>
+                <version>8.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -126,6 +126,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -133,6 +139,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <!-- BEGIN: RUNTIME DEPENDECIES -->
@@ -156,6 +168,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -163,6 +181,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -191,6 +215,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.api</groupId>
@@ -198,6 +228,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.netbeans.modules</groupId>
@@ -205,6 +241,12 @@
             <version>${netbeans.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>org-netbeans-api-annotations-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- END: RUNTIME DEPENDECIES -->
     </dependencies>
@@ -229,6 +271,8 @@
                                         Required during compile but maven-dependency-plugin complains ...
                                     -->
                                     <ignoredUnusedDeclaredDependency>org.netbeans.api:org-netbeans-modules-editor:jar</ignoredUnusedDeclaredDependency>
+                                    <ignoredUnusedDeclaredDependency>log4j:log4j:jar</ignoredUnusedDeclaredDependency>
+                                    <ignoredUnusedDeclaredDependency>org.netbeans.api:org-netbeans-modules-diff:jar</ignoredUnusedDeclaredDependency>
                                 </ignoredUnusedDeclaredDependencies>
                             </configuration>
                         </execution>
@@ -244,6 +288,56 @@
                             </manifest>
                         </archive>
                     </configuration>
+                </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <!-- Optionally configure other settings -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
+
+                <plugin>
+                  <artifactId>maven-assembly-plugin</artifactId>
+                  <configuration>
+                    <mergeManifestMode>merge</mergeManifestMode>
+                    <archive>
+                      <manifest>
+                        <mainClass>de.cismet.custom.visualdiff.Testapplication</mainClass>
+                      </manifest>
+                    </archive>
+                    <descriptorRefs>
+                      <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <dependencySets>
+                        <dependencySet>
+                            <excludes>
+                                <exclude />
+                            </excludes>
+                        </dependencySet>
+                    </dependencySets>
+                  </configuration>
+                  <executions>
+                      <execution>
+                          <id>createJarWithDependencies</id>
+                          <phase>package</phase>
+                          <goals>
+                              <goal>single</goal>
+                          </goals>
+                      </execution>
+                  </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
